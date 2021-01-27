@@ -1,0 +1,16 @@
+{
+  "name": "craft101",
+  "version": "1.0.0",
+  "description": "Web platform services to share Minecraft server information",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aid95/craft101-webapp.git"
+  },
+  "author": "juraffe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aid95/craft101-webapp/issues"
+  },
+  "homepage": "https://github.com/aid95/craft101-webapp#readme"
+}
