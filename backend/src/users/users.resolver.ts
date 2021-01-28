@@ -5,8 +5,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserInput, CreateUserOutput } from './dtos/create-user.dto';
 import { UserLoginInput, UserLoginOutput } from './dtos/login-user.dto';
 import { UpdateUserInput } from './dtos/update-user.dto';
-import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -42,9 +42,30 @@ export class UsersResolver {
     return this.usersService.login(loginInput);
   }
 
-  @Query(() => UserEntity)
+  @Query(() => UserProfileOutput)
   @UseGuards(AuthGuard)
-  me(@AuthUser() authUser: UserEntity) {
-    return authUser;
+  me(@AuthUser() authUser): UserProfileOutput {
+    return {
+      code: HttpStatus.FOUND,
+      data: authUser,
+    };
+  }
+
+  @Query(() => UserProfileOutput)
+  async userProfile(
+    @Args() userProfileInput: UserProfileInput,
+  ): Promise<UserProfileOutput> {
+    try {
+      const user = await this.usersService.findById(userProfileInput.userId);
+      return {
+        code: HttpStatus.FOUND,
+        data: user,
+      };
+    } catch (e) {
+      return {
+        code: HttpStatus.BAD_REQUEST,
+        message: e,
+      };
+    }
   }
 }

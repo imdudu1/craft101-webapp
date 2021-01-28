@@ -48,7 +48,8 @@ type Mutation {
 
 type Query {
   login(user: UserLoginInput!): UserLoginOutput!
-  me: UserEntity!
+  me: UserProfileOutput!
+  userProfile(userId: Float!): UserProfileOutput!
 }
 
 input UpdateUserInput {
@@ -85,6 +86,24 @@ type UserLoginOutput {
   code: Float!
   message: String
   token: String
+}
+
+type UserProfileOutput {
+  code: Float!
+  data: UserProfileProperties
+  message: String
+}
+
+type UserProfileProperties {
+  articles: [ArticleEntity!]!
+  createdAt: DateTime!
+  email: String!
+  id: Float!
+  isActive: Boolean!
+  nickname: String!
+  role: UserRole!
+  updatedAt: DateTime!
+  username: String!
 }
 
 enum UserRole {
