@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 @ObjectType()
-export class CoreEntity {
+export class CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(_type => Number)
   id: number;

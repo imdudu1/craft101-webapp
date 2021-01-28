@@ -10,7 +10,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import * as argon2 from 'argon2';
 import { ArticleEntity } from 'src/articles/entities/article.entity';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CommonEntity } from 'src/common/entities/core.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 
 export enum UserRole {
@@ -21,7 +21,7 @@ registerEnumType(UserRole, { name: 'UserRole' });
 
 @Entity()
 @ObjectType()
-export class UserEntity extends CoreEntity {
+export class UserEntity extends CommonEntity {
   @Column()
   @Field(_type => String)
   @IsString()

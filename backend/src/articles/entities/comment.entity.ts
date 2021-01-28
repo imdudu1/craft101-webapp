@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CommonEntity } from 'src/common/entities/core.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 
 @Entity()
 @ObjectType()
-export class CommentEntity extends CoreEntity {
+export class CommentEntity extends CommonEntity {
   @OneToOne(() => UserEntity)
   @JoinColumn()
   @Field(_type => UserEntity)
