@@ -4,7 +4,7 @@ import { IsNumber } from 'class-validator';
 import { CommonOutput } from '../../common/dtos/output.dto';
 
 @ArgsType()
-export class UserProfileInput {
+export class SelectUserInput {
   @Field(_type => Number)
   @IsNumber()
   userId: number;
@@ -15,6 +15,8 @@ export class UserProfileProperties extends OmitType(UserEntity, ['password']) {}
 
 @ObjectType()
 export class UserProfileOutput extends CommonOutput {
-  @Field(_type => UserProfileProperties, { nullable: true })
-  data?: UserProfileProperties;
+  @Field(_type => UserProfileProperties, {
+    nullable: true,
+  })
+  profile?: UserProfileProperties;
 }
