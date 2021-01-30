@@ -13,10 +13,10 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => CreateUserOutput)
-  async createUser(
+  createUser(
     @Args('form') createUserInput: CreateUserInput,
   ): Promise<CreateUserOutput> {
-    return await this.usersService.create(createUserInput);
+    return this.usersService.create(createUserInput);
   }
 
   @Query(() => UserProfileOutput)
@@ -26,21 +26,17 @@ export class UsersResolver {
   }
 
   @Query(() => UserProfileOutput)
-  async userProfile(
-    @Args() { userId }: SelectUserInput,
-  ): Promise<UserProfileOutput> {
+  userProfile(@Args() { userId }: SelectUserInput): Promise<UserProfileOutput> {
     return this.usersService.findById(userId);
   }
 
   @Mutation(() => Boolean)
-  async updateUser(
-    @Args('form') updateUserDto: UpdateUserInput,
-  ): Promise<boolean> {
+  updateUser(@Args('form') updateUserDto: UpdateUserInput): Promise<boolean> {
     return this.usersService.update(updateUserDto);
   }
 
   @Mutation(() => Boolean)
-  async deleteUser({ userId }: SelectUserInput): Promise<boolean> {
+  deleteUser(@Args() { userId }: SelectUserInput): Promise<boolean> {
     return this.usersService.delete(userId);
   }
 

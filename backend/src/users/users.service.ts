@@ -37,7 +37,7 @@ export class UsersService {
     password,
   }: UserLoginInput): Promise<UserLoginOutput> {
     const user: UserEntity = await this.usersRepository.findOne({ username });
-    if (user !== null && (await argon2.verify(user.password, password))) {
+    if (user && (await argon2.verify(user.password, password))) {
       const token = this.jwtService.sign(user.id);
       return {
         code: HttpStatus.OK,
