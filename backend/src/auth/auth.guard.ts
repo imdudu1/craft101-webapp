@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    if ('x-jwt' in gqlContext && gqlContext['x-jwt'] !== undefined) {
+    if (gqlContext['x-jwt'] !== undefined) {
       const encryptedToken = gqlContext['x-jwt'];
       const token = this.jwtService.verify(encryptedToken.toString());
       try {

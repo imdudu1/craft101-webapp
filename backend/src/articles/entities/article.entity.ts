@@ -1,13 +1,14 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { CommentEntity } from './comment.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { CommonEntity } from 'src/common/entities/core.entity';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @Entity()
 @ObjectType()
-export abstract class ArticleEntity extends CommonEntity {
+@InputType('ArticleInputType', { isAbstract: true })
+export class ArticleEntity extends CommonEntity {
   @Column()
   @Field(_type => String)
   @IsString()
@@ -30,7 +31,6 @@ export abstract class ArticleEntity extends CommonEntity {
   @OneToMany(_type => CommentEntity, comment => comment.article, {
     eager: true,
   })
-  @JoinColumn()
   @Field(_type => [CommentEntity])
   comments: CommentEntity[];
 
@@ -42,6 +42,7 @@ export abstract class ArticleEntity extends CommonEntity {
 
 @Entity()
 @ObjectType()
+@InputType({ isAbstract: true })
 export class ModArticleEntity extends ArticleEntity {
   @Column({ default: '' })
   @Field(_type => String)
@@ -56,6 +57,7 @@ export class ModArticleEntity extends ArticleEntity {
 
 @Entity()
 @ObjectType()
+@InputType({ isAbstract: true })
 export class AdArticleEntity extends ArticleEntity {
   @Column()
   @Field(_type => String)

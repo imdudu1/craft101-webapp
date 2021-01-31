@@ -20,8 +20,13 @@ type CommentEntity {
   body: String!
   createdAt: DateTime!
   id: Float!
-  parentComment: CommentEntity!
   updatedAt: DateTime!
+}
+
+input CreateArticleInput {
+  body: String!
+  tagList: [String!]!
+  title: String!
 }
 
 input CreateUserInput {
@@ -42,8 +47,9 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  createArticle(form: CreateArticleInput!): ArticleEntity!
   createUser(form: CreateUserInput!): CreateUserOutput!
-  deleteUser: Boolean!
+  deleteUser(userId: Float!): Boolean!
   updateUser(form: UpdateUserInput!): Boolean!
 }
 

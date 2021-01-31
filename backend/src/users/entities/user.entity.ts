@@ -9,7 +9,12 @@ import {
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import * as argon2 from 'argon2';
 import { ArticleEntity } from 'src/articles/entities/article.entity';
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/entities/core.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 
@@ -21,6 +26,7 @@ registerEnumType(UserRole, { name: 'UserRole' });
 
 @Entity()
 @ObjectType()
+@InputType('UserInputType', { isAbstract: true })
 export class UserEntity extends CommonEntity {
   @Column()
   @Field(_type => String)

@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { join } from 'path';
 import { JwtModule } from './jwt/jwt.module';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { JwtModule } from './jwt/jwt.module';
       privateKey: process.env.JWT_SECRET_KEY,
     }),
     UsersModule,
+    ArticlesModule,
   ],
   controllers: [],
   providers: [],

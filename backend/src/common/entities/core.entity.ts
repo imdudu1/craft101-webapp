@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -7,6 +7,7 @@ import {
 import { IsDate, IsNumber } from 'class-validator';
 
 @ObjectType()
+@InputType({ isAbstract: true })
 export class CommonEntity {
   @PrimaryGeneratedColumn()
   @Field(_type => Number)
