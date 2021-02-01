@@ -42,7 +42,7 @@ export class ArticleEntity extends CommonEntity {
 
 @Entity()
 @ObjectType()
-@InputType({ isAbstract: true })
+@InputType('ModArticleInputType', { isAbstract: true })
 export class ModArticleEntity extends ArticleEntity {
   @Column({ default: '' })
   @Field(_type => String)
@@ -57,7 +57,7 @@ export class ModArticleEntity extends ArticleEntity {
 
 @Entity()
 @ObjectType()
-@InputType({ isAbstract: true })
+@InputType('AdArticleInputType', { isAbstract: true })
 export class AdArticleEntity extends ArticleEntity {
   @Column()
   @Field(_type => String)

@@ -18,6 +18,9 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
+  /**
+   * 레포지토리로부터 사용자 계정 탐색
+   */
   async findById(id: number): Promise<UserProfileOutput> {
     try {
       const user: UserEntity = await this.usersRepository.findOneOrFail({ id });
@@ -32,6 +35,9 @@ export class UsersService {
     }
   }
 
+  /**
+   * 사용자 로그인
+   */
   async login({
     username,
     password,
@@ -49,6 +55,9 @@ export class UsersService {
     };
   }
 
+  /**
+   * 사용자 계정 삭제
+   */
   async delete(id: number): Promise<boolean> {
     try {
       await this.usersRepository.delete(id);
@@ -58,6 +67,9 @@ export class UsersService {
     }
   }
 
+  /**
+   * 사용자 계정 생성
+   */
   async create({
     email,
     username,
@@ -98,6 +110,9 @@ export class UsersService {
     };
   }
 
+  /**
+   * 사용자 계정 정보 수정
+   */
   async update({ id, data }: UpdateUserInput): Promise<boolean> {
     try {
       await this.usersRepository.update(id, { ...data });

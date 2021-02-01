@@ -49,14 +49,29 @@ scalar DateTime
 type Mutation {
   createArticle(form: CreateArticleInput!): ArticleEntity!
   createUser(form: CreateUserInput!): CreateUserOutput!
+  deleteArticle(id: Float!): Boolean!
   deleteUser(userId: Float!): Boolean!
+  updateArticle(form: UpdateArticleInput!): Boolean!
   updateUser(form: UpdateUserInput!): Boolean!
 }
 
 type Query {
+  article(id: Float!): ArticleEntity!
+  articles(size: Float!): [ArticleEntity!]!
   login(form: UserLoginInput!): UserLoginOutput!
   me: UserProfileOutput!
   userProfile(userId: Float!): UserProfileOutput!
+}
+
+input UpdateArticleInput {
+  data: UpdateArticleProperties!
+  id: Float!
+}
+
+input UpdateArticleProperties {
+  body: String!
+  tagList: [String!]!
+  title: String!
 }
 
 input UpdateUserInput {
