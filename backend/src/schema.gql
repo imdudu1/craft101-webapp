@@ -3,15 +3,47 @@
 # ------------------------------------------------------
 
 type ArticleEntity {
+  articleType: ArticleType!
   author: UserEntity!
+  bannerImage: String
   body: String!
-  comments: [CommentEntity!]!
+  comments: [CommentEntity!]
   createdAt: DateTime!
+  description: String
   favoriteCount: Float!
+  homepageURL: String
   id: Float!
-  tagList: [String!]!
+  serverIP: String!
+  serverName: String!
+  supportVersions: [String!]!
+  tagList: [String!]
   title: String!
   updatedAt: DateTime!
+}
+
+input ArticleInputType {
+  articleType: ArticleType!
+  author: UserInputType!
+  bannerImage: String
+  body: String!
+  comments: [CommentInputType!]
+  createdAt: DateTime!
+  description: String
+  favoriteCount: Float!
+  homepageURL: String
+  id: Float!
+  serverIP: String!
+  serverName: String!
+  supportVersions: [String!]!
+  tagList: [String!]
+  title: String!
+  updatedAt: DateTime!
+}
+
+enum ArticleType {
+  AD
+  MOD
+  NORMAL
 }
 
 type CommentEntity {
@@ -23,10 +55,32 @@ type CommentEntity {
   updatedAt: DateTime!
 }
 
-input CreateArticleInput {
+input CommentInputType {
+  article: ArticleInputType!
+  author: UserInputType!
   body: String!
-  tagList: [String!]!
-  title: String!
+  createdAt: DateTime!
+  id: Float!
+  updatedAt: DateTime!
+}
+
+input CreateArticleInput {
+  articleType: ArticleType
+  author: UserInputType
+  bannerImage: String
+  body: String
+  comments: [CommentInputType!]
+  createdAt: DateTime
+  description: String
+  favoriteCount: Float
+  homepageURL: String
+  id: Float
+  serverIP: String
+  serverName: String
+  supportVersions: [String!]
+  tagList: [String!]
+  title: String
+  updatedAt: DateTime
 }
 
 input CreateUserInput {
@@ -69,9 +123,22 @@ input UpdateArticleInput {
 }
 
 input UpdateArticleProperties {
-  body: String!
-  tagList: [String!]!
-  title: String!
+  articleType: ArticleType
+  author: UserInputType
+  bannerImage: String
+  body: String
+  comments: [CommentInputType!]
+  createdAt: DateTime
+  description: String
+  favoriteCount: Float
+  homepageURL: String
+  id: Float
+  serverIP: String
+  serverName: String
+  supportVersions: [String!]
+  tagList: [String!]
+  title: String
+  updatedAt: DateTime
 }
 
 input UpdateUserInput {
@@ -91,10 +158,23 @@ type UserEntity {
   createdAt: DateTime!
   email: String!
   id: Float!
-  isActive: Boolean!
+  isActive: Boolean
   nickname: String!
   password: String!
-  role: UserRole!
+  role: UserRole
+  updatedAt: DateTime!
+  username: String!
+}
+
+input UserInputType {
+  articles: [ArticleInputType!]!
+  createdAt: DateTime!
+  email: String!
+  id: Float!
+  isActive: Boolean = false
+  nickname: String!
+  password: String!
+  role: UserRole
   updatedAt: DateTime!
   username: String!
 }
@@ -121,9 +201,9 @@ type UserProfileProperties {
   createdAt: DateTime!
   email: String!
   id: Float!
-  isActive: Boolean!
+  isActive: Boolean
   nickname: String!
-  role: UserRole!
+  role: UserRole
   updatedAt: DateTime!
   username: String!
 }

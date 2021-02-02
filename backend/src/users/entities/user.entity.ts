@@ -65,14 +65,12 @@ export class UserEntity extends CommonEntity {
     enum: UserRole,
     default: UserRole.GENERAL,
   })
-  @Field(_type => UserRole)
-  @IsOptional()
+  @Field(_type => UserRole, { nullable: true })
   @IsEnum(UserRole)
   role?: UserRole;
 
   @Column({ default: false })
-  @Field(_type => Boolean, { defaultValue: false })
-  @IsOptional()
+  @Field(_type => Boolean, { defaultValue: false, nullable: true })
   @IsBoolean()
   isActive?: boolean;
 
