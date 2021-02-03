@@ -6,7 +6,8 @@ import { CreateUserInput, CreateUserOutput } from './dtos/create-user.dto';
 import { UserLoginInput, UserLoginOutput } from './dtos/login-user.dto';
 import { UpdateUserInput } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
-import { SelectUserInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
+import { SelectRowInput } from '../common/dtos/select-row.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -26,8 +27,8 @@ export class UsersResolver {
   }
 
   @Query(() => UserProfileOutput)
-  userProfile(@Args() { userId }: SelectUserInput): Promise<UserProfileOutput> {
-    return this.usersService.findById(userId);
+  userProfile(@Args() { id }: SelectRowInput): Promise<UserProfileOutput> {
+    return this.usersService.findById(id);
   }
 
   @Mutation(() => Boolean)
@@ -36,8 +37,8 @@ export class UsersResolver {
   }
 
   @Mutation(() => Boolean)
-  deleteUser(@Args() { userId }: SelectUserInput): Promise<boolean> {
-    return this.usersService.delete(userId);
+  deleteUser(@Args() { id }: SelectRowInput): Promise<boolean> {
+    return this.usersService.delete(id);
   }
 
   @Query(() => UserLoginOutput)

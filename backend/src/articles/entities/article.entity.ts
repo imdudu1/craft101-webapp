@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { CommentEntity } from './comment.entity';
-import { UserEntity, UserRole } from 'src/users/entities/user.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 import { CommonEntity } from 'src/common/entities/core.entity';
 import {
   Field,
@@ -15,6 +15,7 @@ export enum ArticleType {
   MOD = 'MOD',
   AD = 'AD',
 }
+
 registerEnumType(ArticleType, { name: 'ArticleType' });
 
 @Entity()
@@ -25,8 +26,9 @@ export class ArticleEntity extends CommonEntity {
    * Common article columns
    */
   @ManyToOne(_type => UserEntity, user => user.articles)
-  @Field(_type => UserEntity)
-  author: UserEntity;
+  @Field(_type => UserEntity, { nullable: true })
+  @IsOptional()
+  author?: UserEntity;
 
   @Column()
   @Field(_type => String)
@@ -52,9 +54,10 @@ export class ArticleEntity extends CommonEntity {
   comments?: CommentEntity[];
 
   @Column({ default: 0 })
-  @Field(_type => Number)
+  @Field(_type => Number, { nullable: true })
+  @IsOptional()
   @IsNumber()
-  favoriteCount: number;
+  favoriteCount?: number;
 
   @Column({ default: '' })
   @Field(_type => String, { nullable: true })
@@ -73,23 +76,26 @@ export class ArticleEntity extends CommonEntity {
   /**
    * Mod article columns
    */
-  @Column('simple-array')
-  @Field(_type => [String])
+  @Column('simple-array', { default: '' })
+  @Field(_type => [String], { nullable: true })
+  @IsOptional()
   @IsString({ each: true })
-  supportVersions: string[];
+  supportVersions?: string[];
 
   /**
    * Ad article columns
    */
-  @Column()
-  @Field(_type => String)
+  @Column({ default: '' })
+  @Field(_type => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  serverName: string;
+  serverName?: string;
 
-  @Column()
-  @Field(_type => String)
+  @Column({ default: '' })
+  @Field(_type => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  serverIP: string;
+  serverIP?: string;
 
   @Column({ default: '' })
   @Field(_type => String, { nullable: true })

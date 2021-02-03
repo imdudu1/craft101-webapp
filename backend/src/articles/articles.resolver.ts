@@ -2,11 +2,13 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreateArticleInput } from './dto/create-article.dto';
+import { CreateArticleInput } from './dtos/create-article.dto';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { ArticleEntity } from './entities/article.entity';
-import { UpdateArticleInput } from './dto/update-article.dto';
+import { UpdateArticleInput } from './dtos/update-article.dto';
+import { SelectRowInput } from '../common/dtos/select-row.dto';
+import { GetArticlesInput } from './dtos/get-articles.dto';
 
 @Resolver()
 export class ArticlesResolver {
@@ -24,28 +26,28 @@ export class ArticlesResolver {
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   deleteArticle(
-    @AuthUser() authUser,
-    @Args('id') articleId: number,
+    @AuthUser() authUser: UserEntity,
+    @Args() { id }: SelectRowInput,
   ): Promise<boolean> {
-    return this.articlesService.delete(authUser, articleId);
+    return this.articlesService.delete(authUser, id);
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   updateArticle(
-    @AuthUser() authUser,
+    @AuthUser() authUser: UserEntity,
     @Args('form') updateArticleInput: UpdateArticleInput,
   ) {
     return this.articlesService.update(authUser, updateArticleInput);
   }
 
   @Query(() => ArticleEntity)
-  article(@Args('id') id: number): Promise<ArticleEntity> {
+  article(@Args() { id }: SelectRowInput): Promise<ArticleEntity> {
     return this.articlesService.find(id);
   }
 
   @Query(() => [ArticleEntity])
-  articles(@Args('size') size: number): Promise<ArticleEntity[]> {
+  articles(@Args() { size }: GetArticlesInput): Promise<ArticleEntity[]> {
     return this.articlesService.findAll(size);
   }
 }

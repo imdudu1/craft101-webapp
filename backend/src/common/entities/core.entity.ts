@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { IsDate, IsNumber } from 'class-validator';
+import { IsDate, IsNumber, IsOptional } from 'class-validator';
 
 @ObjectType()
 @InputType({ isAbstract: true })
@@ -15,12 +15,14 @@ export class CommonEntity {
   id: number;
 
   @CreateDateColumn()
-  @Field(_type => Date)
+  @Field(_type => Date, { nullable: true })
+  @IsOptional()
   @IsDate()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field(_type => Date)
+  @Field(_type => Date, { nullable: true })
+  @IsOptional()
   @IsDate()
   updatedAt: Date;
 }

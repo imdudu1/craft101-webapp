@@ -4,40 +4,40 @@
 
 type ArticleEntity {
   articleType: ArticleType!
-  author: UserEntity!
+  author: UserEntity
   bannerImage: String
   body: String!
   comments: [CommentEntity!]
-  createdAt: DateTime!
+  createdAt: DateTime
   description: String
-  favoriteCount: Float!
+  favoriteCount: Float
   homepageURL: String
   id: Float!
-  serverIP: String!
-  serverName: String!
-  supportVersions: [String!]!
+  serverIP: String
+  serverName: String
+  supportVersions: [String!]
   tagList: [String!]
   title: String!
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
 
 input ArticleInputType {
   articleType: ArticleType!
-  author: UserInputType!
+  author: UserInputType
   bannerImage: String
   body: String!
   comments: [CommentInputType!]
-  createdAt: DateTime!
+  createdAt: DateTime
   description: String
-  favoriteCount: Float!
+  favoriteCount: Float
   homepageURL: String
   id: Float!
-  serverIP: String!
-  serverName: String!
-  supportVersions: [String!]!
+  serverIP: String
+  serverName: String
+  supportVersions: [String!]
   tagList: [String!]
   title: String!
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
 
 enum ArticleType {
@@ -50,18 +50,18 @@ type CommentEntity {
   article: ArticleEntity!
   author: UserEntity!
   body: String!
-  createdAt: DateTime!
+  createdAt: DateTime
   id: Float!
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
 
 input CommentInputType {
   article: ArticleInputType!
   author: UserInputType!
   body: String!
-  createdAt: DateTime!
+  createdAt: DateTime
   id: Float!
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
 
 input CreateArticleInput {
@@ -104,7 +104,7 @@ type Mutation {
   createArticle(form: CreateArticleInput!): ArticleEntity!
   createUser(form: CreateUserInput!): CreateUserOutput!
   deleteArticle(id: Float!): Boolean!
-  deleteUser(userId: Float!): Boolean!
+  deleteUser(id: Float!): Boolean!
   updateArticle(form: UpdateArticleInput!): Boolean!
   updateUser(form: UpdateUserInput!): Boolean!
 }
@@ -114,7 +114,7 @@ type Query {
   articles(size: Float!): [ArticleEntity!]!
   login(form: UserLoginInput!): UserLoginOutput!
   me: UserProfileOutput!
-  userProfile(userId: Float!): UserProfileOutput!
+  userProfile(id: Float!): UserProfileOutput!
 }
 
 input UpdateArticleInput {
@@ -155,27 +155,27 @@ input UpdateUserProperties {
 
 type UserEntity {
   articles: [ArticleEntity!]!
-  createdAt: DateTime!
+  createdAt: DateTime
   email: String!
   id: Float!
   isActive: Boolean
   nickname: String!
   password: String!
   role: UserRole
-  updatedAt: DateTime!
+  updatedAt: DateTime
   username: String!
 }
 
 input UserInputType {
   articles: [ArticleInputType!]!
-  createdAt: DateTime!
+  createdAt: DateTime
   email: String!
   id: Float!
   isActive: Boolean = false
   nickname: String!
   password: String!
   role: UserRole
-  updatedAt: DateTime!
+  updatedAt: DateTime
   username: String!
 }
 
@@ -198,13 +198,13 @@ type UserProfileOutput {
 
 type UserProfileProperties {
   articles: [ArticleEntity!]!
-  createdAt: DateTime!
+  createdAt: DateTime
   email: String!
   id: Float!
   isActive: Boolean
   nickname: String!
   role: UserRole
-  updatedAt: DateTime!
+  updatedAt: DateTime
   username: String!
 }
 

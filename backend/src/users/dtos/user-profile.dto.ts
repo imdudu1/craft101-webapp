@@ -1,14 +1,6 @@
-import { ArgsType, Field, ObjectType, OmitType } from '@nestjs/graphql';
+import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 import { UserEntity } from '../entities/user.entity';
-import { IsNumber } from 'class-validator';
 import { CommonOutput } from '../../common/dtos/output.dto';
-
-@ArgsType()
-export class SelectUserInput {
-  @Field(_type => Number)
-  @IsNumber()
-  userId: number;
-}
 
 @ObjectType()
 export class UserProfileProperties extends OmitType(UserEntity, ['password']) {}
