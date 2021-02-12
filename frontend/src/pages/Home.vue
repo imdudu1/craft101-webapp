@@ -1,11 +1,11 @@
 <template>
-  <router-view />
+  <div>Hello, World!</div>
 </template>
-
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "App",
+  name: "HomePage",
 });
 </script>
+<style lang="sass"></style>
