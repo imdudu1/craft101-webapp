@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row navigation-wrapper">
+    <div class="row pt-3 pb-3">
       <div
         class="col-md-4 d-flex justify-content-start align-items-center"
       ></div>
@@ -28,10 +28,6 @@ export default class AppNavigation extends Vue {
 </script>
 
 <style scoped>
-.navigation-wrapper {
-  padding: 16px 0 10px 0;
-}
-
 .logo-img {
   height: 50px;
 }
