@@ -7,6 +7,7 @@ import * as Joi from 'joi';
 import { join } from 'path';
 import { JwtModule } from './jwt/jwt.module';
 import { ArticlesModule } from './articles/articles.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ArticlesModule } from './articles/articles.module';
     JwtModule.forRoot({
       privateKey: process.env.JWT_SECRET_KEY,
     }),
+    AuthModule,
     UsersModule,
     ArticlesModule,
   ],

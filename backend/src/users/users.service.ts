@@ -95,6 +95,7 @@ export class UsersService {
     newUserEntity.email = email;
     newUserEntity.password = password;
     newUserEntity.nickname = nickname;
+    /*
     const errors = await validate(newUserEntity);
     if (errors.length > 0) {
       return {
@@ -102,6 +103,7 @@ export class UsersService {
         message: 'Request data is invalid.',
       };
     }
+     */
 
     const newUser = await this.usersRepository.save(newUserEntity);
     return {

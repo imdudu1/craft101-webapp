@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsEmail,
-  IsEnum,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import * as argon2 from 'argon2';
 import { ArticleEntity } from 'src/articles/entities/article.entity';

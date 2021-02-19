@@ -15,8 +15,6 @@ export class ArticlesService {
 
   /**
    * 일반 게시글 생성
-   * @param author
-   * @param createArticleInput
    */
   async create(
     author: UserEntity,
@@ -34,8 +32,6 @@ export class ArticlesService {
 
   /**
    * 일반 게시글 삭제
-   * @param requestUser
-   * @param articleId
    */
   async delete(requestUser: UserEntity, articleId: number): Promise<boolean> {
     try {
