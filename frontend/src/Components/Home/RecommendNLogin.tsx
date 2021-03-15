@@ -5,6 +5,9 @@ import styled from "styled-components";
 import LogoButton from "../LogoButton";
 import TextButton from "../TextButton";
 
+const Container = styled.div`
+  margin: 10px 0;
+`
 const LoginWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,15 +34,14 @@ const OptionRightWrapper = styled.div`
 
 const
   RecommendNLogin: React.FC = () => (
-    <>
-      <h2>추천 서버</h2>
+    <Container>
       <Row>
         <Col>
           <List profiles={[{
             thumbnail: "https://blog.krafton.com/wp-content/uploads/2020/04/GameOn_healing_01.png",
             name: "동물의 숲",
             explanation: "모여봐요 동물의 숲",
-            tags: ["야생", "협동"]
+            tags: ["야생", "협동"],
           }, {
             thumbnail: "https://blog.krafton.com/wp-content/uploads/2020/04/GameOn_healing_01.png",
             name: "동물의 숲",
@@ -54,10 +56,10 @@ const
             thumbnail: "https://blog.krafton.com/wp-content/uploads/2020/04/GameOn_healing_01.png",
             name: "동물의 숲",
             explanation: "모여봐요 동물의 숲",
-            tags: ["야생", "협동"]
+            tags: ["야생", "협동"],
           }]}/>
         </Col>
-        <Col>
+        <Col xs="5">
           <LoginWrapper>
             <LogoButton
               logo={"https://icon-library.com/images/facebook-icon-32-x-32/facebook-icon-32-x-32-4.jpg"}
@@ -77,7 +79,7 @@ const
           </LoginWrapper>
         </Col>
       </Row>
-    </>
+    </Container>
   )
 
 export default RecommendNLogin

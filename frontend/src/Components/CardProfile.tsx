@@ -2,32 +2,35 @@ import React from 'react';
 import {Badge} from 'react-bootstrap';
 import styled from "styled-components";
 
-interface Profile {
+interface IProfileProps {
   thumbnail: string;
   name: string;
   explanation: string;
   tags: string[];
+  cardSize: string;
 }
 
-interface ProfileProps {
-  profiles: Profile[];
+interface IProfiles {
+  profiles: Partial<IProfileProps>[];
 }
 
-const CardListStyle = styled.ul`
+type TItemWrapperProps = Pick<IProfileProps, "cardSize">
+
+const ListStyle = styled.ul`
   list-style: none;
-  display: flex;
-  flex-direction: row;
   padding: 0;
   margin: 0;
 `
-const ItemWrapper = styled.li`
-  width: 153px;
-  display: flex;
-  flex-direction: column;
+const ItemWrapperStyle = styled.li`
+  width: ${(props: TItemWrapperProps) => `${props.cardSize}`};
+  display: block;
+  float: left;
   background: #fff;
+  padding: 3px;
+  overflow: hidden;
 
   &:not(:last-child) {
-    margin-right: 10px;
+    margin-right: 12px;
   }
 
   &:hover {
@@ -36,42 +39,50 @@ const ItemWrapper = styled.li`
 
   transition: box-shadow 0.1s linear;
 `
-const ThumbnailImage = styled.img`
-  width: 153px;
+const ThumbnailStyle = styled.img`
+  width: 100%;
   height: 192px;
   overflow: hidden;
   display: block;
 `
-const ServerInfoWrapper = styled.div`
+const InfoWrapperStyle = styled.div`
   padding: 8px;
 `
-const ServerTitle = styled.p`
+const ServerTitleStyle = styled.p`
   font-size: 16px;
 `
-const ServerExplanation = styled.span`
+const ExplanationStyle = styled.span`
   font-size: 13px;
   color: #666666;
 `
-const ServerTags = styled.span`
+const TagsStyle = styled.span`
   padding-right: 3px;
 `
 
-export const Item: React.FC<Profile> = ({thumbnail, name, explanation, tags}) => (
-  <ItemWrapper>
-    <ThumbnailImage src={thumbnail} alt={"thumbnail"}/>
-    <ServerInfoWrapper>
-      <ServerTitle>{name}</ServerTitle>
-      <ServerExplanation>{explanation}</ServerExplanation>
-      <div>{tags.map((v, i) => (
-        <ServerTags key={`tag-${i}`}><Badge pill variant={"info"}>{v}</Badge></ServerTags>))}</div>
-    </ServerInfoWrapper>
-  </ItemWrapper>
+const Item = (profile: IProfileProps) => (
+  <ItemWrapperStyle cardSize={profile.cardSize}>
+    {console.log(profile)}
+    <ThumbnailStyle src={profile.thumbnail} alt={"thumbnail"}/>
+    <InfoWrapperStyle>
+      <ServerTitleStyle>{profile.name}</ServerTitleStyle>
+      <ExplanationStyle>{profile.explanation}</ExplanationStyle>
+      <div>{profile.tags.map((v, i) => (
+        <TagsStyle key={`tag-${i}`}><Badge pill variant={"info"}>{v}</Badge></TagsStyle>))}</div>
+    </InfoWrapperStyle>
+  </ItemWrapperStyle>
 )
+Item.defaultProps = {
+  thumbnail: "",
+  name: "",
+  explanation: "",
+  tags: [],
+  cardSize: "149px"
+}
 
-export const List: React.FC<ProfileProps> = ({profiles}) => (
-  <CardListStyle>
+export const List = ({profiles}: IProfiles) => (
+  <ListStyle>
     {profiles.map((v, i) => (
-      <Item thumbnail={v.thumbnail} name={v.name} explanation={v.explanation} tags={v.tags} key={`item-${i}`}/>
+      <Item {...v} key={`item-${i}`}/>
     ))}
-  </CardListStyle>
+  </ListStyle>
 )
