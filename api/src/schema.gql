@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Article {
+  explanation: String!
+  name: String!
+  tags: [String!]!
+  thumbnail: String!
+}
+
+type Mutation {
+  deleteArticle(id: Float!): Boolean!
+  newArticle(explanation: String!, name: String!, tags: [String!]!, thumbnail: String!): Article!
+  updateArticle(explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Article!
+}
+
+type Query {
+  article(id: Float!): Article!
+  articles: [Article!]!
+}
