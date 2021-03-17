@@ -4,6 +4,7 @@
 
 type Article {
   explanation: String!
+  id: Float!
   name: String!
   tags: [String!]!
   thumbnail: String!
@@ -12,7 +13,7 @@ type Article {
 type Mutation {
   deleteArticle(id: Float!): Boolean!
   newArticle(explanation: String!, name: String!, tags: [String!]!, thumbnail: String!): Article!
-  updateArticle(explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Article!
+  updateArticle(explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Boolean!
 }
 
 type Query {
