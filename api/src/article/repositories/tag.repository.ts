@@ -1,10 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Tag } from '../entities/tag.entity';
+import slugify from 'slugify';
 
 @EntityRepository(Tag)
 export class TagRepository extends Repository<Tag> {
   async getOrCreate(name: string): Promise<Tag> {
-    const tagName = name.trim();
+    const tagName = slugify(name.trim());
     let tag = await this.findOne({
       name: tagName,
     });

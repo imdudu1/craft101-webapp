@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dtos/create-article.dto';
 import { UpdateArticleDto } from './dtos/update-article.dto';
 import { TagRepository } from './repositories/tag.repository';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class ArticleService {
@@ -24,28 +25,36 @@ export class ArticleService {
     });
   }
 
-  async create({
-    name,
-    thumbnail,
-    explanation,
-    tags,
-  }: CreateArticleDto): Promise<Article> {
-    const newArticle = new Article();
-    newArticle.name = name;
-    newArticle.thumbnail = thumbnail;
-    newArticle.explanation = explanation;
-    newArticle.tags = [];
-    for (const tag of tags) {
-      newArticle.tags.push(await this.tagRepository.getOrCreate(tag));
+  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+    const convertedTags = [];
+    if (createArticleDto.tags !== undefined) {
+      for (const tag of createArticleDto.tags) {
+        convertedTags.push(await this.tagRepository.getOrCreate(tag));
+      }
     }
-    return this.articleRepository.save(newArticle);
+
+    const newArticle = new Article();
+    const created = Object.assign(newArticle, createArticleDto);
+    return this.articleRepository.save({ ...created, tags: convertedTags });
   }
 
   async update(
     id: number,
     updateArticleDto: UpdateArticleDto,
-  ): Promise<boolean> {
-    return true;
+  ): Promise<Article> {
+    const convertedTags: Tag[] = [];
+    if (updateArticleDto.tags !== undefined) {
+      for (const tag of updateArticleDto.tags) {
+        convertedTags.push(await this.tagRepository.getOrCreate(tag));
+      }
+    }
+
+    const toUpdate = await this.articleRepository.findOne(id);
+    const updated = Object.assign(toUpdate, updateArticleDto);
+    return await this.articleRepository.save({
+      ...updated,
+      tags: convertedTags,
+    });
   }
 
   async delete(id: number): Promise<boolean> {

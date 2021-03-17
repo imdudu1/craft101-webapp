@@ -25,11 +25,11 @@ export class ArticleResolver {
     return this.articleService.create(createArticleDto);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Article)
   async updateArticle(
     @Args('id') id: number,
     @Args() updateArticleDto: UpdateArticleDto,
-  ): Promise<boolean> {
+  ): Promise<Article> {
     return this.articleService.update(id, updateArticleDto);
   }
 

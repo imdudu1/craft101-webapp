@@ -15,7 +15,7 @@ export class CreateArticleDto {
   @IsString()
   explanation: string;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   @IsString({ each: true })
   @IsOptional()
   tags?: string[];
