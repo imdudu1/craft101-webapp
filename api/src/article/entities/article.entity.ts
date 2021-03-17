@@ -1,11 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Tag } from './tag.entity';
 
 @ObjectType()
 @Entity()
 export class Article {
-  @PrimaryGeneratedColumn()
   @Field(() => Number)
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Field(() => String)
@@ -20,7 +27,10 @@ export class Article {
   @Column()
   explanation: string;
 
-  @Field(() => [String])
-  // @Column()
-  tags: string[];
+  @Field(() => [Tag], { nullable: true })
+  @ManyToMany(() => Tag, (tag) => tag.articles, {
+    cascade: ['insert'],
+  })
+  @JoinTable()
+  tags?: Tag[];
 }

@@ -4,12 +4,14 @@ import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dtos/create-article.dto';
 import { UpdateArticleDto } from './dtos/update-article.dto';
+import { TagRepository } from './repositories/tag.repository';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
+    private readonly tagRepository: TagRepository,
   ) {}
 
   async getAll(): Promise<Article[]> {
@@ -22,8 +24,20 @@ export class ArticleService {
     });
   }
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const newArticle = this.articleRepository.create(createArticleDto);
+  async create({
+    name,
+    thumbnail,
+    explanation,
+    tags,
+  }: CreateArticleDto): Promise<Article> {
+    const newArticle = new Article();
+    newArticle.name = name;
+    newArticle.thumbnail = thumbnail;
+    newArticle.explanation = explanation;
+    newArticle.tags = [];
+    for (const tag of tags) {
+      newArticle.tags.push(await this.tagRepository.getOrCreate(tag));
+    }
     return this.articleRepository.save(newArticle);
   }
 
@@ -31,13 +45,7 @@ export class ArticleService {
     id: number,
     updateArticleDto: UpdateArticleDto,
   ): Promise<boolean> {
-    const updateArticle = await this.articleRepository.update(
-      {
-        id,
-      },
-      updateArticleDto,
-    );
-    return updateArticle.affected > 0;
+    return true;
   }
 
   async delete(id: number): Promise<boolean> {

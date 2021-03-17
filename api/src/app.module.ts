@@ -5,6 +5,7 @@ import { join } from 'path';
 import { ArticleModule } from './article/article.module';
 import { ConfigModule } from '@nestjs/config';
 import { Article } from './article/entities/article.entity';
+import { Tag } from './article/entities/tag.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { Article } from './article/entities/article.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Article],
+      entities: [Article, Tag],
       synchronize: true,
       logging: 'all',
     }),
