@@ -6,6 +6,7 @@ import { ArticleModule } from './article/article.module';
 import { ConfigModule } from '@nestjs/config';
 import { Article } from './article/entities/article.entity';
 import { Tag } from './article/entities/tag.entity';
+import { Category } from './article/entities/category.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { Tag } from './article/entities/tag.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Article, Tag],
+      entities: [Article, Tag, Category],
       synchronize: true,
       logging: 'all',
     }),

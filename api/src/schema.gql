@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type Article {
+  category: Category!
   explanation: String!
   id: Float!
   name: String!
@@ -10,15 +11,22 @@ type Article {
   thumbnail: String!
 }
 
+type Category {
+  articles: [Article!]!
+  id: Float!
+  name: String!
+}
+
 type Mutation {
   deleteArticle(id: Float!): Boolean!
-  newArticle(explanation: String!, name: String!, tags: [String!], thumbnail: String!): Article!
-  updateArticle(explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Article!
+  newArticle(category: Float!, explanation: String!, name: String!, tags: [String!], thumbnail: String!): Article!
+  updateArticle(category: Float, explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Article!
 }
 
 type Query {
   article(id: Float!): Article!
   articles: [Article!]!
+  tagArticles(tag: String!): [Article!]!
 }
 
 type Tag {

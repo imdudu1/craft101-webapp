@@ -19,4 +19,8 @@ export class CreateArticleDto {
   @IsString({ each: true })
   @IsOptional()
   tags?: string[];
+
+  @Field(() => Number)
+  @IsString()
+  category: number;
 }

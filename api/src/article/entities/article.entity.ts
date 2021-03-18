@@ -4,9 +4,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tag } from './tag.entity';
+import { Category } from './category.entity';
 
 @ObjectType()
 @Entity()
@@ -33,4 +35,8 @@ export class Article {
   })
   @JoinTable()
   tags?: Tag[];
+
+  @Field(() => Category)
+  @ManyToOne(() => Category, (category) => category.articles)
+  category: Category;
 }
