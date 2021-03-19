@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { ArticleModule } from './article/article.module';
+import { ArticlesModule } from './articles/articles.module';
 import { ConfigModule } from '@nestjs/config';
-import { Article } from './article/entities/article.entity';
-import { Tag } from './article/entities/tag.entity';
-import { Category } from './article/entities/category.entity';
+import { Articles } from './articles/entities/articles.entity';
+import { Tags } from './articles/entities/tags.entity';
+import { Categories } from './articles/entities/categories.entity';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { Category } from './article/entities/category.entity';
       autoSchemaFile: join('src/schema.gql'),
       sortSchema: true,
     }),
-    ArticleModule,
+    ArticlesModule,
   ],
   controllers: [],
   providers: [],

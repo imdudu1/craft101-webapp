@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Article } from './article.entity';
+import { Articles } from './articles.entity';
 
 @ObjectType()
 @Entity()
-export class Tag {
+export class Tags {
   @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,7 +13,7 @@ export class Tag {
   @Column()
   name: string;
 
-  @Field(() => [Article])
-  @ManyToMany(() => Article, (article) => article.tags)
-  articles: Article[];
+  @Field(() => [Articles])
+  @ManyToMany(() => Articles, (article) => article.tags)
+  articles: Articles[];
 }

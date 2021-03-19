@@ -7,12 +7,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Tag } from './tag.entity';
-import { Category } from './category.entity';
+import { Tags } from './tags.entity';
+import { Categories } from './categories.entity';
 
 @ObjectType()
 @Entity()
-export class Article {
+export class Articles {
   @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,14 +29,14 @@ export class Article {
   @Column()
   explanation: string;
 
-  @Field(() => [Tag], { nullable: true })
-  @ManyToMany(() => Tag, (tag) => tag.articles, {
+  @Field(() => [Tags], { nullable: true })
+  @ManyToMany(() => Tags, (tag) => tag.articles, {
     cascade: ['insert'],
   })
   @JoinTable()
-  tags?: Tag[];
+  tags?: Tags[];
 
-  @Field(() => Category)
-  @ManyToOne(() => Category, (category) => category.articles)
-  category: Category;
+  @Field(() => Categories)
+  @ManyToOne(() => Categories, (category) => category.articles)
+  category: Categories;
 }
