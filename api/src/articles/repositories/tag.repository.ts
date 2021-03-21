@@ -3,7 +3,7 @@ import { Tags } from '../entities/tags.entity';
 import slugify from 'slugify';
 
 @EntityRepository(Tags)
-export class TagRepository extends Repository<Tags> {
+export class TagsRepository extends Repository<Tags> {
   async getOrCreate(name: string): Promise<Tags> {
     const tagName = slugify(name.trim());
     let tag = await this.findOne({

@@ -10,22 +10,6 @@ import { Tags } from './entities/tags.entity';
 export class ArticlesResolver {
   constructor(private readonly articleService: ArticlesService) {}
 
-  //--START: TEST
-  @Query(() => Number)
-  async setTest(@Args('num') num: number): Promise<number> {
-    const result = await this.articleService.setNum(num);
-    console.log(result);
-    return 0;
-  }
-
-  @Query(() => Number)
-  async getTest(): Promise<number> {
-    const result = await this.articleService.getNum();
-    console.log(result);
-    return 0;
-  }
-  //--END: TEST
-
   @Query(() => Articles)
   async article(@Args('id') id: number): Promise<Articles> {
     return this.articleService.findArticleById(id);

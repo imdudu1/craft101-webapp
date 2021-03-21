@@ -2,35 +2,55 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Article {
-  category: Category!
+enum AccountType {
+  KAKAO
+}
+
+type Articles {
+  category: Categories!
   explanation: String!
   id: Float!
   name: String!
-  tags: [Tag!]
+  tags: [Tags!]
   thumbnail: String!
 }
 
-type Category {
-  articles: [Article!]!
+type Categories {
+  articles: [Articles!]!
   id: Float!
   name: String!
 }
 
 type Mutation {
   deleteArticle(id: Float!): Boolean!
-  newArticle(category: Float!, explanation: String!, name: String!, tags: [String!], thumbnail: String!): Article!
-  updateArticle(category: Float, explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Article!
+  newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
+  newArticle(category: Float!, explanation: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
+  updateArticle(category: Float, explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
 }
 
 type Query {
-  article(id: Float!): Article!
-  articles: [Article!]!
-  tagArticles(tag: String!): [Article!]!
+  article(id: Float!): Articles!
+  articles: [Articles!]!
+  tagArticles(tag: String!): [Articles!]!
 }
 
-type Tag {
-  articles: [Article!]!
+type Tags {
+  articles: [Articles!]!
   id: Float!
   name: String!
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+type Users {
+  accountType: AccountType!
+  email: String!
+  id: Float!
+  nickname: String!
+  password: String!
+  role: UserRole!
+  username: String!
 }

@@ -4,7 +4,7 @@ import { Articles } from './entities/articles.entity';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dtos/create-article.dto';
 import { UpdateArticleDto } from './dtos/update-article.dto';
-import { TagRepository } from './repositories/tag.repository';
+import { TagsRepository } from './repositories/tag.repository';
 import { Tags } from './entities/tags.entity';
 import { Categories } from './entities/categories.entity';
 import { Cache } from 'cache-manager';
@@ -15,35 +15,25 @@ export class ArticlesService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     @InjectRepository(Articles)
-    private readonly articleRepository: Repository<Articles>,
+    private readonly articlesRepository: Repository<Articles>,
     @InjectRepository(Categories)
-    private readonly categoryRepository: Repository<Categories>,
-    private readonly tagRepository: TagRepository,
+    private readonly categoriesRepository: Repository<Categories>,
+    private readonly tagsRepository: TagsRepository,
   ) {}
-
-  //--START: TEST
-  async setNum(num: number): Promise<number> {
-    return this.cacheManager.set('num', num, { ttl: 60 * 15 });
-  }
-
-  async getNum(): Promise<number> {
-    return this.cacheManager.get('num');
-  }
-  //--END: TEST
 
   //--START: Article methods
   async allArticles(): Promise<Articles[]> {
-    return this.articleRepository.find();
+    return this.articlesRepository.find();
   }
 
   async findArticleById(id: number): Promise<Articles> {
-    return this.articleRepository.findOne({
+    return this.articlesRepository.findOne({
       id,
     });
   }
 
   async tagArticles(tagName: string): Promise<Articles[]> {
-    const tag: Tags = await this.tagRepository
+    const tag: Tags = await this.tagsRepository
       .createQueryBuilder('tag')
       .where({ name: tagName })
       .leftJoinAndSelect('tag.articles', 'article')
@@ -56,13 +46,13 @@ export class ArticlesService {
     const convertedTags = [];
     if (createArticleDto.tags !== undefined) {
       for (const tag of createArticleDto.tags) {
-        convertedTags.push(await this.tagRepository.getOrCreate(tag));
+        convertedTags.push(await this.tagsRepository.getOrCreate(tag));
       }
     }
     // 새 게시글 생성
     const article = new Articles();
     const created = Object.assign(article, createArticleDto);
-    return this.articleRepository.save({
+    return this.articlesRepository.save({
       tags: convertedTags,
       ...created,
     });
@@ -72,56 +62,57 @@ export class ArticlesService {
     id: number,
     { tags, ...data }: UpdateArticleDto,
   ): Promise<Articles> {
-    const toUpdate = await this.articleRepository.findOne(id);
+    const toUpdate = await this.articlesRepository.findOne(id);
     const updated = Object.assign(toUpdate, data);
     if (tags !== undefined) {
       const convertedTags: Tags[] = [];
       for (const tag of tags) {
-        convertedTags.push(await this.tagRepository.getOrCreate(tag));
+        convertedTags.push(await this.tagsRepository.getOrCreate(tag));
       }
       updated.tags = convertedTags;
     }
-    return this.articleRepository.save(updated);
+    return this.articlesRepository.save(updated);
   }
 
   async deleteArticle(id: number): Promise<boolean> {
-    const result = await this.articleRepository.delete(id);
+    const result = await this.articlesRepository.delete(id);
     return result.affected > 0;
   }
   //--END: Article methods
 
   //--START: Tag methods
   async allTags(): Promise<Tags[]> {
-    return this.tagRepository.find();
+    return this.tagsRepository.find();
   }
 
   async findTagById(id: number): Promise<Tags> {
-    return this.tagRepository.findOne(id);
+    return this.tagsRepository.findOne(id);
   }
   //--END: Tag methods
 
   //--START: Category methods
   async allCategories(): Promise<Categories[]> {
-    return this.categoryRepository.find();
+    return this.categoriesRepository.find();
   }
 
   async findCategoryById(id: number): Promise<Categories> {
-    return this.categoryRepository.findOne(id);
+    return this.categoriesRepository.findOne(id);
   }
 
   async createCategory(name: string): Promise<Categories> {
-    const newCategory = await this.categoryRepository.create({ name });
-    return this.categoryRepository.save(newCategory);
+    const newCategory = this.categoriesRepository.create({ name });
+    return this.categoriesRepository.save(newCategory);
   }
 
   async updateCategory(id: number, name: string): Promise<Categories> {
     const updated = new Categories();
+    updated.id = id;
     updated.name = name;
-    return this.categoryRepository.save(updated);
+    return this.categoriesRepository.save(updated);
   }
 
   async deleteCategory(id: number): Promise<boolean> {
-    const result = await this.categoryRepository.delete(id);
+    const result = await this.categoriesRepository.delete(id);
     return result.affected > 0;
   }
   //--END: Category methods
