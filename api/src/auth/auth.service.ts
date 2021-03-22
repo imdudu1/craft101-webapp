@@ -7,12 +7,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OAuthTokens } from './entities/oauth-tokens.entity';
 import { Repository } from 'typeorm';
+import { CertifyEmailCodes } from './entities/certify-email-code.entity';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(OAuthTokens)
     private readonly authTokensRepository: Repository<OAuthTokens>,
+    @InjectRepository(CertifyEmailCodes)
+    private readonly certifyEmailCodesRepository: Repository<CertifyEmailCodes>,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -27,6 +31,7 @@ export class AuthService {
     return null;
   }
 
+  //--START: OAuth2
   async validateKakaoUser({ id, displayName }: Profile) {
     const tempUsername = `kakao@${id}`;
     let user = await this.usersService.findUserByUsername(tempUsername);
@@ -58,7 +63,9 @@ export class AuthService {
     updated.user = user;
     await this.authTokensRepository.save(updated);
   }
+  //--END: OAuth2
 
+  //--START: Jsonwebtoken
   async createJwt(id: number): Promise<string> {
     return this.jwtService.sign(`${id}`);
   }
@@ -74,4 +81,40 @@ export class AuthService {
   async decodeJwt(jwt: string) {
     return this.jwtService.decode(jwt);
   }
+  //--END: Jsonwebtoken
+
+  //--START: Certify E-mail
+  async generateCertifyEmailCode(userId: number): Promise<boolean> {
+    const user = await this.usersService.findUserById(userId);
+    const code = crypto.randomInt(110101, 999999);
+    if (!user.certifyEmail) {
+      const certifyEmailCode = this.certifyEmailCodesRepository.create({
+        user,
+        code,
+      });
+      await this.certifyEmailCodesRepository.save(certifyEmailCode);
+      return true;
+    }
+    return false;
+  }
+
+  async verifyCertifyEmailCode(userId: number, code: number): Promise<boolean> {
+    const user = await this.usersService.findUserById(userId);
+    const certifyEmailCode = await this.certifyEmailCodesRepository.findOne({
+      user,
+    });
+    if (certifyEmailCode.code === code) {
+      user.certifyEmail = true;
+      await this.usersService.updateUser(user.id, user);
+      await this.deleteCertifyEmailCode(certifyEmailCode.id);
+      return true;
+    }
+    return false;
+  }
+
+  async deleteCertifyEmailCode(id: number): Promise<boolean> {
+    const result = await this.certifyEmailCodesRepository.delete(id);
+    return result.affected > 0;
+  }
+  //--END: Certify E-mail
 }

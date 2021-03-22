@@ -22,9 +22,11 @@ type Categories {
 }
 
 type Mutation {
+  confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
   newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
   newArticle(category: Float!, explanation: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
+  requestCertifyEmail: Boolean!
   updateArticle(category: Float, explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
 }
 
@@ -48,6 +50,7 @@ enum UserRole {
 
 type Users {
   accountType: AccountType!
+  certifyEmail: Boolean!
   email: String!
   id: Float!
   nickname: String!

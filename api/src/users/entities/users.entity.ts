@@ -43,6 +43,10 @@ export class Users {
   @Column()
   email: string;
 
+  @Field(() => Boolean)
+  @Column({ default: false })
+  certifyEmail: boolean;
+
   @Field(() => UserRole)
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   @IsEnum(UserRole)

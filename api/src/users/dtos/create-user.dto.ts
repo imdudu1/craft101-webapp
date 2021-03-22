@@ -10,7 +10,7 @@ export class CreateUserDto {
 
   @Field(() => String)
   @IsString()
-  @Matches(/^\$2[ayb]\$[\d]{2}\$[./A-Za-z0-9]{53}$/)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)
   password: string;
 
   @Field(() => String)

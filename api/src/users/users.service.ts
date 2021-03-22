@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,5 +44,23 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  // TODO: Update, Delete should be implemented.
+  async updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Users> {
+    const user = await this.findUserById(userId);
+    if (user.certifyEmail && updateUserDto.email) {
+      user.certifyEmail = updateUserDto.email === user.email;
+    }
+    if (user) {
+      Object.assign(user, updateUserDto);
+      return this.usersRepository.save(user);
+    }
+    return null;
+  }
+
+  async deleteUser(userId: number): Promise<boolean> {
+    const result = await this.usersRepository.delete(userId);
+    return result.affected > 0;
+  }
 }

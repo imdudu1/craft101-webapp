@@ -17,7 +17,8 @@ import { Categories } from './articles/entities/categories.entity';
 import { Users } from './users/entities/users.entity';
 import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
 import { AppController } from './app.controller';
-import { AuthMiddleware } from './auth/auth.middleware';
+import { AuthMiddleware } from './auth/middlewares/auth.middleware';
+import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
 
 @Module({
   imports: [
@@ -32,7 +33,14 @@ import { AuthMiddleware } from './auth/auth.middleware';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Articles, Tags, Categories, Users, OAuthTokens],
+      entities: [
+        Articles,
+        Tags,
+        Categories,
+        Users,
+        OAuthTokens,
+        CertifyEmailCodes,
+      ],
       synchronize: true,
       logging: 'all',
     }),
