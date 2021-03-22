@@ -8,6 +8,8 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OAuthTokens } from './entities/oauth-tokens.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -18,7 +20,15 @@ import { OAuthTokens } from './entities/oauth-tokens.entity';
     }),
     TypeOrmModule.forFeature([OAuthTokens]),
   ],
-  providers: [AuthService, AuthResolver, KakaoStrategy],
+  providers: [
+    AuthService,
+    AuthResolver,
+    KakaoStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

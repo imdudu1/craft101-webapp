@@ -64,7 +64,11 @@ export class AuthService {
   }
 
   async verifyJwt(jwt: string) {
-    return this.jwtService.verify(jwt);
+    const userId: number = +this.jwtService.verify(jwt);
+    const { password, ...result } = await this.usersService.findUserById(
+      userId,
+    );
+    return result;
   }
 
   async decodeJwt(jwt: string) {
