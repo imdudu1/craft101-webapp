@@ -4,6 +4,7 @@
 
 enum AccountType {
   KAKAO
+  LOCAL
 }
 
 type Articles {
@@ -33,6 +34,7 @@ type Mutation {
 type Query {
   article(id: Float!): Articles!
   articles: [Articles!]!
+  login(password: String!, username: String!): String!
   me: Users!
   tagArticles(tag: String!): [Articles!]!
 }

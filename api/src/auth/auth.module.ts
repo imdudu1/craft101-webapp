@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { UsersModule } from '../users/users.module';
@@ -14,7 +14,7 @@ import { CertifyEmailCodes } from './entities/certify-email-code.entity';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     PassportModule,
     JwtModule.register({
       secret: 'V3RY_STR0nG_S3CR3T_STR_vV2@v@$42AS2305(743',

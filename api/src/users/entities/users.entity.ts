@@ -16,6 +16,7 @@ export enum UserRole {
 registerEnumType(UserRole, { name: 'UserRole' });
 
 export enum AccountType {
+  LOCAL = 'LOCAL',
   KAKAO = 'KAKAO',
 }
 registerEnumType(AccountType, { name: 'AccountType' });
@@ -53,7 +54,7 @@ export class Users {
   role: UserRole;
 
   @Field(() => AccountType)
-  @Column({ type: 'enum', enum: AccountType })
+  @Column({ type: 'enum', enum: AccountType, default: AccountType.LOCAL })
   @IsEnum(AccountType)
   accountType: AccountType;
 

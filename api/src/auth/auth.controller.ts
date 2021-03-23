@@ -17,6 +17,7 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthCallback(@Req() req, @Res() res) {
     const token = await this.authService.createJwt(req.user);
+    // TODO: Edit redirect to front-end router URL
     return {
       url: `/${token}`,
     };

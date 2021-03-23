@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { AccountType, UserRole, Users } from '../users/entities/users.entity';
 import { Profile } from 'passport';
@@ -17,16 +17,21 @@ export class AuthService {
     private readonly authTokensRepository: Repository<OAuthTokens>,
     @InjectRepository(CertifyEmailCodes)
     private readonly certifyEmailCodesRepository: Repository<CertifyEmailCodes>,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateLocalUser(username: string, pass: string): Promise<any> {
+  async validateLocalUser(
+    username: string,
+    password: string,
+  ): Promise<string | null> {
     const user = await this.usersService.findUserByUsername(username);
-    const isValid = await user.checkPassword(pass);
-    if (user && isValid) {
-      const { password, ...result } = user;
-      return result;
+    if (user) {
+      const isValid = await user.checkPassword(password);
+      if (user && isValid) {
+        return this.createJwt(user.id);
+      }
     }
     return null;
   }
@@ -60,7 +65,6 @@ export class AuthService {
     }
     updated.accessToken = accessToken;
     updated.refreshToken = refreshToken;
-    updated.user = user;
     await this.authTokensRepository.save(updated);
   }
   //--END: OAuth2

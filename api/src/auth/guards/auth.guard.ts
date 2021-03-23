@@ -13,9 +13,8 @@ export class AuthGuard implements CanActivate {
       const currentUser = await this.authService.verifyJwt(token);
       if (currentUser) {
         gqlContext['user'] = currentUser;
-        return true;
       }
     }
-    return false;
+    return true;
   }
 }
