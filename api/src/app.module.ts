@@ -47,6 +47,7 @@ import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
     GraphQLModule.forRoot({
       autoSchemaFile: join('src/schema.gql'),
       sortSchema: true,
+      installSubscriptionHandlers: true,
       context: ({ req }) => {
         return {
           token: req ? req.headers['x-jwt'] : '',

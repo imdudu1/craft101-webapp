@@ -23,7 +23,7 @@ const ContainerStyle = styled.nav`
 
 const InlineBarMenu: React.FC<Props> = ({tags}) => (
   <ContainerStyle>
-    {tags.map(tag => <TextButton text={tag} color={"#123"} hoverColor={"#456"}/>)}
+    {tags.map((tag, index) => <TextButton key={`line-${index}`} text={tag} color={"#123"} hoverColor={"#456"}/>)}
   </ContainerStyle>
 )
 

@@ -82,4 +82,4 @@ const
     </Container>
   )
 
-export default RecommendNLogin
+export default RecommendNLogin;

@@ -61,7 +61,6 @@ const TagsStyle = styled.span`
 
 const Item = (profile: IProfileProps) => (
   <ItemWrapperStyle cardSize={profile.cardSize}>
-    {console.log(profile)}
     <ThumbnailStyle src={profile.thumbnail} alt={"thumbnail"}/>
     <InfoWrapperStyle>
       <ServerTitleStyle>{profile.name}</ServerTitleStyle>
