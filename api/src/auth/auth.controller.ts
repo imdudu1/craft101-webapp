@@ -1,6 +1,7 @@
 import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { FRONT_SERVER_URL } from '../constants';
 
 @Controller('auth')
 export class AuthController {
@@ -17,8 +18,7 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthCallback(@Req() req, @Res() res) {
     const token = await this.authService.createJwt(req.user);
-    // TODO: Edit redirect to front-end router URL
-    const url = `http://localhost:3000/auth/kakao/${token}`;
+    const url = `${FRONT_SERVER_URL}/auth/kakao/${token}`;
     return {
       url,
     };

@@ -14,10 +14,11 @@ const token = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
 export const isLoggedInVar = makeVar(Boolean(token));
 export const authTokenVar = makeVar(token);
 
-// TODO: Modifying URI Options for deployment and development environments
-
 const wsLInk = new WebSocketLink({
-  uri: 'ws://localhost:4000/graphql',
+  uri:
+    process.env.NODE_ENV === 'production'
+      ? 'wss://api.gomi.land/graphql'
+      : 'ws://localhost:4000/graphql',
   options: {
     reconnect: true,
     connectionParams: {
@@ -27,7 +28,10 @@ const wsLInk = new WebSocketLink({
 });
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri:
+    process.env.NODE_ENV === 'production'
+      ? 'https://api.gomi.land/graphql'
+      : 'http://localhost:4000/graphql',
 });
 
 const authLInk = setContext((_, { headers }) => {

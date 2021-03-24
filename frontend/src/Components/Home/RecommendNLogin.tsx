@@ -79,7 +79,7 @@ const RecommendNLogin: React.FC = () => (
             color={'#fff'}
             bgColor={'#3b5998'}
           />
-          <a href={'http://localhost:4000/auth/kakao'}>
+          <a href={'https://api.gomi.land/auth/kakao'}>
             <LogoButton
               logo={
                 'https://cdn.iconscout.com/icon/free/png-256/kakaotalk-2-226573.png'

@@ -17,6 +17,7 @@ import { CertifyEmailCodes } from './entities/certify-email-code.entity';
     forwardRef(() => UsersModule),
     PassportModule,
     JwtModule.register({
+      // TODO: Keeping secret keys secure
       secret: 'V3RY_STR0nG_S3CR3T_STR_vV2@v@$42AS2305(743',
     }),
     TypeOrmModule.forFeature([OAuthTokens, CertifyEmailCodes]),
