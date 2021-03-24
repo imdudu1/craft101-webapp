@@ -17,13 +17,11 @@ services:
       - USE_BROTLI=yes
       - USE_REVERSE_PROXY=yes
       - api.example.com_REVERSE_PROXY_URL=/
-      - api.example.com_REVERSE_PROXY_HOST=http://backend:4000/graphql
+      - api.example.com_REVERSE_PROXY_HOST=http://backend:4000
       - www.example.com_REVERSE_PROXY_URL=/
       - www.example.com_REVERSE_PROXY_HOST=http://frontend:8080
     networks:
       - webnet
-    volumes:
-      - ./certfiles:/etc/letsencrypt
     depends_on:
       - backend
       - frontend
