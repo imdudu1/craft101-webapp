@@ -9,7 +9,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     super({
       clientID: process.env.KAKAO_API_KEY,
       clientSecret: process.env.KAKAO_SECRET,
-      callbackURL: 'http://localhost:4000/auth/kakao/callback',
+      callbackURL: 'https://api.gomi.land/auth/kakao/callback',
     });
   }
 

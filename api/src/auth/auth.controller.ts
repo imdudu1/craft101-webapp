@@ -18,7 +18,7 @@ export class AuthController {
   async kakaoAuthCallback(@Req() req, @Res() res) {
     const token = await this.authService.createJwt(req.user);
     // TODO: Edit redirect to front-end router URL
-    const url = `http://localhost:3000/auth/kakao/${token}`;
+    const url = `https://www.gomi.land/auth/kakao/${token}`;
     return {
       url,
     };

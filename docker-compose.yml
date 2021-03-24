@@ -1,13 +1,13 @@
 version: "3.7"
 
 services:
-  myreverse:
-    container_name: myreverse
+  proxy-server:
+    container_name: proxy-server
     image: bunkerity/bunkerized-nginx
     restart: always
     environment:
       - MULTISITE=yes
-      - SERVER_NAME=api.gomi.land www.gomi.land
+      - SERVER_NAME=api.example.com www.example.com
       - SERVE_FILES=no
       - DISABLE_DEFAULT_SERVER=yes
       - REDIRECT_HTTP_TO_HTTPS=yes
@@ -17,7 +17,7 @@ services:
       - USE_BROTLI=yes
       - USE_REVERSE_PROXY=yes
       - api.gomi.land_REVERSE_PROXY_URL=/
-      - api.gomi.land_REVERSE_PROXY_HOST=http://backend:3000/graphql
+      - api.gomi.land_REVERSE_PROXY_HOST=http://backend:4000/graphql
       - www.gomi.land_REVERSE_PROXY_URL=/
       - www.gomi.land_REVERSE_PROXY_HOST=http://frontend:8080
     networks:
@@ -30,43 +30,49 @@ services:
     ports:
       - 80:8080
       - 443:8443
+
   redis:
     container_name: redis
     image: redis
     restart: always
     networks:
       - webnet
+
   db:
     container_name: db
     image: postgres
     restart: always
     environment:
-      - POSTGRES_PASSWORD=yourpasswordhere
+      - POSTGRES_USER={{USER}}
+      - POSTGRES_PASSWORD={{PASSWORD}}
+      - POSTGRES_DB={{DB}}
     ports:
-      - 5432:5432
+      - 4321:5432
     networks:
       - webnet
     volumes:
-      - dbdisk:/var/lib/mysql
+      - db-volume:/var/lib/postgresql/data
+
   backend:
     container_name: backend
     build:
-      context: ./backend
+      context: ./api
     networks:
       - webnet
     restart: always
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=yourpasswordhere
-      - DB_DATABASE=postgres
-      - JWT_SECRET_KEY=exampletokensecretkey
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - DB_USER={{USER}}
+      - DB_PASSWORD={{PASSWORD}}
+      - DB_NAME={{DB}}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET_KEY={{SECRET_KEY}}
+      - KAKAO_API_KEY={{KAKAO_API_KEY}}
     depends_on:
       - db
+
   frontend:
     container_name: frontend
     build:
@@ -74,10 +80,9 @@ services:
     networks:
       - webnet
     restart: always
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+
 networks:
   webnet:
+
 volumes:
-  dbdisk:
+  db-volume:
