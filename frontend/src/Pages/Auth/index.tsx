@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import useInputs from '../../../Hooks/useInputs';
+import useInputs from '../../Hooks/useInputs';
 import { Button, TextField } from '@material-ui/core';
 import { useLazyQuery, useReactiveVar } from '@apollo/client';
-import { authTokenVar, isLoggedInVar } from '../../../apollo';
+import { authTokenVar, isLoggedInVar } from '../../apollo';
 import { gql } from '@apollo/client/core';
 import { Redirect } from 'react-router-dom';
 import {
   LoginQueryGql,
   LoginQueryGqlVariables,
-} from '../../../__generated__/LoginQueryGql';
+} from '../../__generated__/LoginQueryGql';
+import { LOCALSTORAGE_TOKEN_KEY } from '../../constants';
 
 const LoginContainerStyled = styled.div`
   min-height: 100vh;
@@ -40,7 +41,7 @@ export const LOGIN_QUERY_GQL = gql`
   }
 `;
 
-const Login: React.FC = () => {
+const AuthPage: React.FC = () => {
   const [{ userId, userPw }, onChange] = useInputs({
     userId: '',
     userPw: '',
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
     {
       onCompleted: (data) => {
         const { login } = data;
-        localStorage.setItem('auth_token', login);
+        localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, login);
         isLoggedInVar(true);
         authTokenVar(login);
       },
@@ -110,4 +111,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default AuthPage;
