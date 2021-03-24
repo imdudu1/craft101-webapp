@@ -14,6 +14,8 @@ RUN npm install \
 
 FROM nginx
 
+ENV NODE_ENV production
+
 WORKDIR /app
 
 RUN rm /etc/nginx/conf.d/default.conf
