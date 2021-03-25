@@ -1,16 +1,13 @@
 import React from 'react';
-import Routes from "./Routes";
-import {Container} from 'react-bootstrap';
-
-import GlobalStyles from "../Styles/GlobalStyles";
-import "bootstrap/dist/css/bootstrap.min.css"
+import Routes from './Routes';
+import Header from './Header';
 
 function App() {
   return (
-    <Container>
-      <GlobalStyles/>
-      <Routes/>
-    </Container>
+    <div className="h-screen bg-gray-100">
+      <Header />
+      <Routes />
+    </div>
   );
 }
 
