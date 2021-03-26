@@ -10,15 +10,15 @@ const Header: React.FC = () => (
       <span className="">CRAFT101</span>
       <nav className="h-full">
         <ul className="h-full flex items-center">
-          <li className="h-full w-24 px-3 border-opacity-10 border-l align-middle flex justify-center items-center hover:bg-blue-50">
+          <li className="h-full w-24 px-3 border-opacity-10 border-l align-middle flex justify-center items-center hover:bg-gray-50">
             <ExploreIcon />
           </li>
-          <li className="h-full w-24 px-3 border-opacity-10 border-l flex justify-center items-center hover:bg-blue-50">
+          <li className="h-full w-24 px-3 border-opacity-10 border-l flex justify-center items-center hover:bg-gray-50">
             <Badge badgeContent={4} color="primary">
               <MailIcon />
             </Badge>
           </li>
-          <li className="h-full w-24 px-3 border-opacity-10 border-l border-r flex justify-center items-center hover:bg-blue-50">
+          <li className="h-full w-24 px-3 border-opacity-10 border-l border-r flex justify-center items-center hover:bg-gray-50">
             <LockOpenIcon />
           </li>
         </ul>

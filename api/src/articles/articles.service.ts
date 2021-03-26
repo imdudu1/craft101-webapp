@@ -22,8 +22,15 @@ export class ArticlesService {
   ) {}
 
   //--START: Article methods
-  async allArticles(): Promise<Articles[]> {
-    return this.articlesRepository.find();
+  async allArticles(offset: number, limit: number): Promise<Articles[]> {
+    const count = await this.articlesRepository.createQueryBuilder().getCount();
+    if (count < offset) return [];
+
+    return this.articlesRepository
+      .createQueryBuilder('articles')
+      .offset(offset)
+      .limit(limit)
+      .getMany();
   }
 
   async findArticleById(id: number): Promise<Articles> {
@@ -42,19 +49,23 @@ export class ArticlesService {
   }
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Articles> {
+    const { tags, ...otherParts } = createArticleDto;
     // 문자열로 받은 태그 정보를 엔티티 정보로 변환
-    const convertedTags = [];
-    if (createArticleDto.tags !== undefined) {
-      for (const tag of createArticleDto.tags) {
-        convertedTags.push(await this.tagsRepository.getOrCreate(tag));
-      }
+    const convertedTags: Tags[] = [];
+    if (tags !== undefined) {
+      // TODO: 최적화를 위해 없는 태그에 대해 개별적인 INSERT가 아닌 일괄 INSERT가 되도록 수정
+      await Promise.all(
+        tags.map(async (tag) => {
+          convertedTags.push(await this.tagsRepository.getOrCreate(tag));
+        }),
+      );
     }
     // 새 게시글 생성
-    const article = new Articles();
-    const created = Object.assign(article, createArticleDto);
+    const created2 = this.articlesRepository.create();
+    const created = Object.assign(created2, otherParts);
     return this.articlesRepository.save({
-      tags: convertedTags,
       ...created,
+      tags: Promise.resolve(convertedTags),
     });
   }
 
@@ -69,7 +80,7 @@ export class ArticlesService {
       for (const tag of tags) {
         convertedTags.push(await this.tagsRepository.getOrCreate(tag));
       }
-      updated.tags = convertedTags;
+      updated.tags = Promise.resolve(convertedTags);
     }
     return this.articlesRepository.save(updated);
   }

@@ -1,5 +1,5 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 @ArgsType()
 export class CreateArticleDto {
@@ -15,12 +15,22 @@ export class CreateArticleDto {
   @IsString()
   explanation: string;
 
+  @Field(() => String)
+  @IsString()
+  @IsUrl()
+  discord: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsUrl()
+  homepage: string;
+
   @Field(() => [String], { nullable: true })
   @IsString({ each: true })
   @IsOptional()
   tags?: string[];
 
   @Field(() => Number)
-  @IsString()
+  @IsNumber()
   category: number;
 }

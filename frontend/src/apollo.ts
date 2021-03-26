@@ -6,7 +6,10 @@ import {
   split,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { getMainDefinition } from '@apollo/client/utilities';
+import {
+  getMainDefinition,
+  offsetLimitPagination,
+} from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { LOCALSTORAGE_TOKEN_KEY } from './constants';
 
@@ -61,6 +64,7 @@ export const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
+          articles: offsetLimitPagination(),
           isLoggedIn: {
             read() {
               return isLoggedInVar();

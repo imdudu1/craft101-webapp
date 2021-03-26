@@ -16,8 +16,11 @@ export class ArticlesResolver {
   }
 
   @Query(() => [Articles])
-  async articles(): Promise<Articles[]> {
-    return this.articleService.allArticles();
+  async articles(
+    @Args('offset') offset: number,
+    @Args('limit') limit: number,
+  ): Promise<Articles[]> {
+    return this.articleService.allArticles(offset, limit);
   }
 
   @Query(() => [Articles])

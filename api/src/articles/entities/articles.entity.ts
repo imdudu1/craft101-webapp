@@ -29,12 +29,20 @@ export class Articles {
   @Column()
   explanation: string;
 
+  @Field(() => String)
+  @Column()
+  discord: string;
+
+  @Field(() => String)
+  @Column()
+  homepage: string;
+
   @Field(() => [Tags], { nullable: true })
   @ManyToMany(() => Tags, (tag) => tag.articles, {
     cascade: ['insert'],
   })
   @JoinTable()
-  tags?: Tags[];
+  tags?: Promise<Tags[]>;
 
   @Field(() => Categories)
   @ManyToOne(() => Categories, (category) => category.articles)

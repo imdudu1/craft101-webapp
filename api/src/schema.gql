@@ -9,7 +9,9 @@ enum AccountType {
 
 type Articles {
   category: Categories!
+  discord: String!
   explanation: String!
+  homepage: String!
   id: Float!
   name: String!
   tags: [Tags!]
@@ -26,14 +28,14 @@ type Mutation {
   confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
   newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
-  newArticle(category: Float!, explanation: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
+  newArticle(category: Float!, discord: String!, explanation: String!, homepage: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   requestCertifyEmail: Boolean!
-  updateArticle(category: Float, explanation: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
+  updateArticle(category: Float, discord: String, explanation: String, homepage: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
 }
 
 type Query {
   article(id: Float!): Articles!
-  articles: [Articles!]!
+  articles(limit: Float!, offset: Float!): [Articles!]!
   login(password: String!, username: String!): String!
   me: Users!
   tagArticles(tag: String!): [Articles!]!
