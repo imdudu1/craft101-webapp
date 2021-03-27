@@ -3,9 +3,13 @@ import LiveStateBar from '../../Components/Home/LiveStateBar';
 import LineNewsBar from '../../Components/Home/LineNewsBar';
 import SectionTitle from '../../Components/SectionTitle';
 import ServerInfiniteList from '../../Components/Home/ServerInfiniteList';
+import { Helmet } from 'react-helmet';
 
 const HomePage: React.FC = () => (
   <div className="container mx-auto grid grid-cols-12 mt-4 gap-3">
+    <Helmet>
+      <title>CRAFT101 :: 마인크래프트 서버 리스트</title>
+    </Helmet>
     <div className="h-96 col-span-2 flex justify-center border-gray-50 shadow-sm rounded-md bg-gradient-to-tl from-purple-400 via-pink-500 to-red-500">
       <span></span>
     </div>
