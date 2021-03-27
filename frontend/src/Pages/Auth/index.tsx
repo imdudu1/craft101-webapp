@@ -9,6 +9,7 @@ import {
   LoginQueryGqlVariables,
 } from '../../__generated__/LoginQueryGql';
 import { LOCALSTORAGE_TOKEN_KEY } from '../../constants';
+import { Helmet } from 'react-helmet';
 
 export const LOGIN_QUERY_GQL = gql`
   query LoginQueryGql($username: String!, $password: String!) {
@@ -45,7 +46,14 @@ const AuthPage: React.FC = () => {
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  return <>{isLoggedIn ? <Redirect to={'/'} /> : <></>}</>;
+  return (
+    <>
+      <Helmet>
+        <title>CRAFT101 :: 로그인</title>
+      </Helmet>
+      {isLoggedIn ? <Redirect to={'/'} /> : <></>}
+    </>
+  );
 };
 
 export default AuthPage;

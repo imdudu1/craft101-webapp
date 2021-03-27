@@ -2,6 +2,14 @@ module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    minWidth: {
+      0: '0',
+      '1/4': '25%',
+      '1/2': '50%',
+      '3/4': '75%',
+      '17rem': '17rem',
+      full: '100%',
+    },
     boxShadow: {
       sm: 'rgb(0 0 0 / 2%) -1px 1px 1px',
       DEFAULT:
@@ -21,7 +29,8 @@ module.exports = {
     extend: {},
   },
   variants: {
+    scrollbar: ['rounded'],
     extend: {},
   },
-  plugins: [require('@tailwindcss/line-clamp')],
+  plugins: [require('@tailwindcss/line-clamp'), require('tailwind-scrollbar')],
 };

@@ -45,6 +45,7 @@ import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
       logging: 'all',
     }),
     GraphQLModule.forRoot({
+      playground: process.env.NODE_ENV !== 'production',
       autoSchemaFile: join('src/schema.gql'),
       sortSchema: true,
       installSubscriptionHandlers: true,
