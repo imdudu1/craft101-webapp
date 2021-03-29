@@ -1,5 +1,5 @@
-import React from "react"
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 interface Props {
   logo: string;
@@ -8,8 +8,8 @@ interface Props {
   bgColor: string;
 }
 
-type ContainerProps = Pick<Props, 'bgColor'>
-type ButtonTextProps = Pick<Props, 'color'>
+type ContainerProps = Pick<Props, 'bgColor'>;
+type ButtonTextProps = Pick<Props, 'color'>;
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -17,33 +17,34 @@ const ContainerStyle = styled.div`
   justify-content: center;
   align-items: center;
   height: 43px;
-  width: 321px;
+  width: 100%;
   margin: 5px 0;
-  background-color: ${(props: ContainerProps) => props.bgColor || "#fff"};
+  background-color: ${(props: ContainerProps) => props.bgColor || '#fff'};
+  border-radius: 0.375rem;
 
   :hover {
     cursor: pointer;
   }
-`
+`;
 const ButtonLogoStyle = styled.img`
   width: 21px;
   height: 21px;
   margin-right: 12px;
   border-radius: 3px;
-`
+`;
 const ButtonTextStyle = styled.span`
-  color: ${(props: ButtonTextProps) => props.color || "#fff"};
-`
+  color: ${(props: ButtonTextProps) => props.color || '#fff'};
+`;
 
-const LogoButton: React.FC<Props> = ({logo, text, bgColor, color}) => (
+const LogoButton: React.FC<Props> = ({ logo, text, bgColor, color }) => (
   <ContainerStyle bgColor={bgColor}>
     <>
-      <ButtonLogoStyle alt={"button_logo"} src={logo}/>
+      <ButtonLogoStyle alt={'button_logo'} src={logo} />
     </>
     <>
       <ButtonTextStyle color={color}>{text}</ButtonTextStyle>
     </>
   </ContainerStyle>
-)
+);
 
-export default LogoButton
+export default LogoButton;
