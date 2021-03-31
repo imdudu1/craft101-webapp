@@ -16,7 +16,7 @@ const ContainerStyle = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 43px;
+  height: 44px;
   width: 100%;
   margin: 5px 0;
   background-color: ${(props: ContainerProps) => props.bgColor || '#fff'};
@@ -36,14 +36,11 @@ const ButtonTextStyle = styled.span`
   color: ${(props: ButtonTextProps) => props.color || '#fff'};
 `;
 
+// TODO: Add onClick event
 const LogoButton: React.FC<Props> = ({ logo, text, bgColor, color }) => (
   <ContainerStyle bgColor={bgColor}>
-    <>
-      <ButtonLogoStyle alt={'button_logo'} src={logo} />
-    </>
-    <>
-      <ButtonTextStyle color={color}>{text}</ButtonTextStyle>
-    </>
+    <ButtonLogoStyle alt={'button_logo'} src={logo} />
+    <ButtonTextStyle color={color}>{text}</ButtonTextStyle>
   </ContainerStyle>
 );
 

@@ -19,23 +19,24 @@ export const LOGIN_QUERY_GQL = gql`
 `;
 
 const AuthPage: React.FC = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [{ userId, userPw }, onChange] = useInputs({
     userId: '',
     userPw: '',
   });
-
   const [login] = useLazyQuery<LoginQueryGql, LoginQueryGqlVariables>(
     LOGIN_QUERY_GQL,
     {
-      onCompleted: (data) => {
-        const { login } = data;
+      onCompleted: ({ login }) => {
         localStorage.setItem(LOCALSTORAGE_TOKEN_KEY, login);
         isLoggedInVar(true);
         authTokenVar(login);
       },
+      onError: (error) => {
+        // TODO: implementing login failure handling
+      },
     },
   );
-
   const onClick = useCallback(() => {
     login({
       variables: {
@@ -44,8 +45,6 @@ const AuthPage: React.FC = () => {
       },
     });
   }, [login, userId, userPw]);
-
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   return (
     <React.Fragment>
@@ -56,7 +55,7 @@ const AuthPage: React.FC = () => {
         <Redirect to={'/'} />
       ) : (
         <div className="max-w-md mx-auto bg-white shadow-sm rounded-md my-8">
-          <div className="flex justify-center items-center"></div>
+          <div className="flex justify-center items-center">&nbsp;</div>
           <div className="bg-white pt-8 pb-8">
             <div className="w-4/5 mx-auto">
               <div className="flex items-center border-b bg-white rounded shadow-sm mb-4">
@@ -73,6 +72,9 @@ const AuthPage: React.FC = () => {
                   className="w-full h-12 focus:outline-none"
                   type="text"
                   placeholder="Username"
+                  onChange={onChange}
+                  value={userId}
+                  name="userId"
                 />
               </div>
               <div className="flex items-center border-b bg-white rounded shadow-sm mb-4">
@@ -88,16 +90,19 @@ const AuthPage: React.FC = () => {
                 <input
                   className="w-full h-12 focus:outline-none"
                   type="password"
-                  name="password"
                   placeholder="Password"
+                  onChange={onChange}
+                  value={userPw}
+                  name="userPw"
                 />
               </div>
             </div>
             <div className="w-4/5 mx-auto">
               <div>
                 <button
-                  className="w-full py-3 bg-gray-800 rounded-md shadow-sm text-white font-medium outline-none"
+                  className="w-full py-2.5 bg-gray-800 rounded-md shadow-sm text-white font-medium outline-none"
                   type="button"
+                  onClick={onClick}
                 >
                   Sign in
                 </button>
@@ -107,18 +112,23 @@ const AuthPage: React.FC = () => {
                   logo={
                     'https://icon-library.com/images/facebook-icon-32-x-32/facebook-icon-32-x-32-4.jpg'
                   }
-                  text={'Facebook 로그인'}
+                  text={'Sign in with Facebook'}
                   color={'#fff'}
-                  bgColor={'#3b5998'}
+                  bgColor={'#4A6EA9'}
                 />
-                <LogoButton
-                  logo={
-                    'https://cdn.iconscout.com/icon/free/png-256/kakaotalk-2-226573.png'
-                  }
-                  text={'Kakaotalk'}
-                  color={'#000'}
-                  bgColor={'#ffe812'}
-                />
+                <a
+                  href="http://localhost:4000/auth/kakao"
+                  className="hover:no-underline"
+                >
+                  <LogoButton
+                    logo={
+                      'https://cdn.iconscout.com/icon/free/png-256/kakaotalk-2-226573.png'
+                    }
+                    text={'Sign in with Kakaotalk'}
+                    color={'#000'}
+                    bgColor={'#FFE812'}
+                  />
+                </a>
               </div>
             </div>
           </div>
