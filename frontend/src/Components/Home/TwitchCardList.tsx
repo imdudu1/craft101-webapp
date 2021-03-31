@@ -2,7 +2,7 @@ import React from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 
-interface Channel {
+interface IChannel {
   status: string;
   url: string;
   display_name: string;
@@ -11,33 +11,33 @@ interface Channel {
   logo: string;
 }
 
-interface Preview {
+interface IPreview {
   large: string;
   medium: string;
   small: string;
   template: string;
 }
 
-interface Stream {
-  channel: Channel;
-  preview: Preview;
+interface IStream {
+  channel: IChannel;
+  preview: IPreview;
 }
 
-interface Streams {
-  streams: Stream[];
+interface IStreams {
+  streams: IStream[];
 }
 
 interface Props {
-  title: string;
-  thumbnail: string;
+  status: string;
   displayName: string;
   name: string;
   url: string;
   logo: string;
+  thumbnail: string;
 }
 
 export const TwitchCard: React.FC<Props> = ({
-  title,
+  status,
   thumbnail,
   displayName,
   name,
@@ -55,7 +55,7 @@ export const TwitchCard: React.FC<Props> = ({
         <img src={logo} alt="profile_logo" className="w-10 mr-2 rounded-full" />
         <div>
           <p className="font-sans-kr text-sm line-clamp-1 overflow-hidden overflow-ellipsis whitespace-normal">
-            {title}
+            {status}
           </p>
           <p className="font-sans-kr text-gray-500 font-light text-xs line-clamp-1 overflow-hidden overflow-ellipsis whitespace-normal">
             {displayName} ({name})
@@ -67,7 +67,7 @@ export const TwitchCard: React.FC<Props> = ({
 );
 
 export const TwitchCardList: React.FC = () => {
-  const { data } = useSWR<Streams>(
+  const { data } = useSWR<IStreams>(
     [
       'https://api.twitch.tv/kraken/search/streams?query=Minecraft',
       'm672k7f5wjo1sbk5y1ioi23h0gb2yj',
@@ -82,22 +82,25 @@ export const TwitchCardList: React.FC = () => {
         })
         .then((r) => r.data),
   );
-  console.log(data);
 
   return (
     <div className="pb-3 flex flex-row overflow-x-scroll whitespace-nowrap scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300 ">
       {data?.streams.map(
-        ({
-          channel: { status, display_name, name, url, logo },
-          preview: { medium },
-        }) => (
+        (
+          {
+            channel: { status, display_name, name, url, logo },
+            preview: { medium },
+          },
+          key,
+        ) => (
           <TwitchCard
-            title={status}
+            status={status}
             thumbnail={medium}
             displayName={display_name}
             name={name}
             url={url}
             logo={logo}
+            key={`tc-${key}`}
           />
         ),
       )}
