@@ -100,7 +100,7 @@ export const TwitchCardList: React.FC = () => {
             name={name}
             url={url}
             logo={logo}
-            key={`tc-${key}`}
+            key={`twitchtv-${key}`}
           />
         ),
       )}
