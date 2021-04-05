@@ -1,18 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './Components/App';
-import {ApolloProvider} from '@apollo/client';
-import {client} from './apollo';
-import {HelmetProvider} from "react-helmet-async"
+import { ApolloProvider } from '@apollo/client';
+import { HelmetProvider } from 'react-helmet-async';
 import './Styles/tailwind.css';
+import WebSocketProvider from './Context/WebSocketProvider';
+import { client as ApolloClient } from './apollo';
+import { client as SocketClient } from './websocket';
 
-const helmetContext = {}
+const helmetContext = {};
 
 ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider context={helmetContext}>
-      <ApolloProvider client={client}>
-        <App/>
+      <ApolloProvider client={ApolloClient}>
+        <WebSocketProvider client={SocketClient}>
+          <App />
+        </WebSocketProvider>
       </ApolloProvider>
     </HelmetProvider>
   </React.StrictMode>,

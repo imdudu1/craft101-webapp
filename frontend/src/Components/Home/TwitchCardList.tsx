@@ -27,7 +27,7 @@ interface IStreams {
   streams: IStream[];
 }
 
-interface Props {
+interface IProps {
   status: string;
   displayName: string;
   name: string;
@@ -36,7 +36,7 @@ interface Props {
   thumbnail: string;
 }
 
-export const TwitchCard: React.FC<Props> = ({
+export const TwitchCard: React.FC<IProps> = ({
   status,
   thumbnail,
   displayName,

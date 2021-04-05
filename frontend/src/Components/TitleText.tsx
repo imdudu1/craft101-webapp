@@ -1,8 +1,8 @@
-import React from "react"
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-interface Props {
-  text: string
+interface TitleTextProps {
+  text: string;
 }
 
 const Title = styled.h2`
@@ -10,10 +10,8 @@ const Title = styled.h2`
   font-size: 30px;
   font-weight: bold;
   margin-top: 29px;
-`
+`;
 
-const TitleText = ({text}: Props) => (
-  <Title>{text}</Title>
-)
+const TitleText = ({ text }: TitleTextProps) => <Title>{text}</Title>;
 
-export default TitleText
+export default TitleText;

@@ -1,13 +1,17 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
 import {
   serversQueryGql,
   serversQueryGql_articles,
   serversQueryGql_articles_tags,
   serversQueryGqlVariables,
 } from '../../__generated__/serversQueryGql';
+import { Link } from 'react-router-dom';
+import TagBadgeList from '../TagBadge';
+import { gql, useQuery } from '@apollo/client';
+import { fromEvent } from 'rxjs';
 
-interface Props {
+interface IProps {
+  postId: number;
   thumbnail: string;
   name: string;
   explanation: string;
@@ -16,7 +20,8 @@ interface Props {
   tags: serversQueryGql_articles_tags[] | null;
 }
 
-export const ServerButton: React.FC<Props> = ({
+export const ServerButton: React.FC<IProps> = ({
+  postId,
   thumbnail,
   name,
   explanation,
@@ -24,21 +29,23 @@ export const ServerButton: React.FC<Props> = ({
   homepage,
   tags,
 }) => (
-  <div className="grid grid-cols-12 p-4 shadow-sm rounded-xl bg-white cursor-pointer transition duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+  <div className="grid grid-cols-12 p-4 shadow-sm rounded-xl bg-white transition duration-300 transform hover:-translate-y-1 hover:shadow-xl">
     <img
       className="col-span-3 bg-blue-300 rounded-full h-24 w-24 overflow-hidden shadow-sm"
       src={thumbnail}
       alt="thumbnail"
     />
     <div className="max-h-full col-span-9 mr-3 flex flex-col justify-between">
-      <div className="flex flex-col">
-        <p className="font-sans-kr text-xl mb-1 overflow-hidden overflow-ellipsis line-clamp-1 text-gray-700">
-          {name}
-        </p>
-        <p className="font-sans-kr text-xs text-gray-400 overflow-ellipsis overflow-hidden line-clamp-2">
-          {explanation}
-        </p>
-      </div>
+      <Link to={`post/${postId}`} className="hover:no-underline cursor-pointer">
+        <div className="flex flex-col">
+          <p className="font-sans-kr text-xl mb-1 overflow-hidden overflow-ellipsis line-clamp-1 text-gray-700">
+            {name}
+          </p>
+          <p className="font-sans-kr text-xs text-gray-400 overflow-ellipsis overflow-hidden line-clamp-2">
+            {explanation}
+          </p>
+        </div>
+      </Link>
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center">
           <a className="hover:no-underline" href={discord}>
@@ -56,20 +63,7 @@ export const ServerButton: React.FC<Props> = ({
             />
           </a>
         </div>
-        <ul className="flex flex-row">
-          {tags?.slice(undefined, 3).map((tag, key) => (
-            <li className="mr-1" key={`tags-${key}`}>
-              <div className="pt-1 pb-1 flex items-center space-x-1 text-sm px-2 bg-gray-200 text-gray-800 rounded-full">
-                <div className="w-1.5 h-1.5 bg-gray-500 rounded-full">
-                  &nbsp;
-                </div>
-                <p className="w-10 text-xs overflow-hidden overflow-ellipsis whitespace-nowrap">
-                  {tag.name}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <TagBadgeList tags={tags?.map((tag) => tag.name)} />
       </div>
     </div>
   </div>
@@ -78,6 +72,7 @@ export const ServerButton: React.FC<Props> = ({
 export const SERVERS_QUERY_GQL = gql`
   query serversQueryGql($offset: Float!, $limit: Float!) {
     articles(offset: $offset, limit: $limit) {
+      id
       thumbnail
       name
       explanation
@@ -128,9 +123,11 @@ const ServerInfiniteList: React.FC = () => {
   }, [loading, onLoadMore]);
 
   React.useEffect(() => {
-    window.addEventListener('scroll', scrollEventHandler);
+    const subscription = fromEvent(document, 'scroll').subscribe(
+      scrollEventHandler,
+    );
     return () => {
-      window.removeEventListener('scroll', scrollEventHandler);
+      subscription.unsubscribe();
     };
   }, [scrollEventHandler]);
 
@@ -138,8 +135,12 @@ const ServerInfiniteList: React.FC = () => {
     <div>
       <div className="mb-3 grid grid-cols-2 gap-3">
         {servers.map(
-          ({ thumbnail, name, explanation, discord, homepage, tags }, key) => (
+          (
+            { id, thumbnail, name, explanation, discord, homepage, tags },
+            key,
+          ) => (
             <ServerButton
+              postId={id}
               thumbnail={thumbnail}
               name={name}
               explanation={explanation}
