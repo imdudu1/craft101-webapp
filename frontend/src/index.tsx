@@ -6,7 +6,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import './Styles/tailwind.css';
 import WebSocketProvider from './Context/WebSocketProvider';
 import { client as ApolloClient } from './apollo';
-import { client as SocketClient } from './websocket';
+import { LiveMC } from './live-mc';
+import { WEBSOCKET_URL } from './constants';
 
 const helmetContext = {};
 
@@ -14,7 +15,7 @@ ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider context={helmetContext}>
       <ApolloProvider client={ApolloClient}>
-        <WebSocketProvider client={SocketClient}>
+        <WebSocketProvider client={new LiveMC(WEBSOCKET_URL)}>
           <App />
         </WebSocketProvider>
       </ApolloProvider>

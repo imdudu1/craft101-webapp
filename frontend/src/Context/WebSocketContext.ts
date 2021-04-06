@@ -1,7 +1,8 @@
 import React from 'react';
+import { LiveMC } from '../live-mc';
 
 export interface WebSocketContextValue {
-  client?: WebSocket;
+  client?: LiveMC;
 }
 
 const cache = new WeakMap<

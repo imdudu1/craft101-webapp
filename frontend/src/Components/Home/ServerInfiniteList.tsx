@@ -123,11 +123,11 @@ const ServerInfiniteList: React.FC = () => {
   }, [loading, onLoadMore]);
 
   React.useEffect(() => {
-    const subscription = fromEvent(document, 'scroll').subscribe(
-      scrollEventHandler,
-    );
+    const subscription$ = fromEvent(document, 'scroll').subscribe({
+      next: scrollEventHandler,
+    });
     return () => {
-      subscription.unsubscribe();
+      subscription$.unsubscribe();
     };
   }, [scrollEventHandler]);
 

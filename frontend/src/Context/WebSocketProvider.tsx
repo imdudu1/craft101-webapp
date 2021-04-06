@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { getWebSocketContext } from './WebSocketContext';
 import { invariant } from 'ts-invariant';
+import { LiveMC } from '../live-mc';
 
 interface WebSocketProviderProps {
-  client: WebSocket;
+  client: LiveMC;
   children: React.ReactNode | React.ReactNode[] | null;
 }
 
@@ -11,9 +12,7 @@ const WebSocketProvider = ({ client, children }: WebSocketProviderProps) => {
   const WebSocketContext = getWebSocketContext();
 
   useEffect(() => {
-    return () => {
-      client.close();
-    };
+    return client.close;
   });
 
   return (
