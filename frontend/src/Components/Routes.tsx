@@ -4,7 +4,8 @@ import HomePage from '../Pages/Home';
 import AuthPage from '../Pages/Auth';
 import KakaoAuthPage from '../Pages/Auth/Kakao';
 import Header from './Header';
-import SignOut from '../Pages/Auth/SignOut';
+import SignOutPage from '../Pages/Auth/SignOut';
+import PostViewPage from '../Pages/Article';
 
 const Routes: React.FC = () => (
   <BrowserRouter>
@@ -13,7 +14,8 @@ const Routes: React.FC = () => (
       <Route path={'/'} exact component={HomePage} />
       <Route path={'/auth/kakao/:token'} component={KakaoAuthPage} />
       <Route path={'/auth'} component={AuthPage} />
-      <Route path={'/signout'} component={SignOut} />
+      <Route path={'/signout'} component={SignOutPage} />
+      <Route path={'/post/:postId'} component={PostViewPage} />
     </Switch>
   </BrowserRouter>
 );

@@ -14,6 +14,7 @@ export interface serversQueryGql_articles_tags {
 
 export interface serversQueryGql_articles {
   __typename: "Articles";
+  id: number;
   thumbnail: string;
   name: string;
   explanation: string;

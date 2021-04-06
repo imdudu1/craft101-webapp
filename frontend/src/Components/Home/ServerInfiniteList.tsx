@@ -1,13 +1,17 @@
 import React from 'react';
-import {gql, useQuery} from '@apollo/client';
 import {
   serversQueryGql,
   serversQueryGql_articles,
   serversQueryGql_articles_tags,
   serversQueryGqlVariables,
 } from '../../__generated__/serversQueryGql';
+import { Link } from 'react-router-dom';
+import TagBadgeList from '../TagBadge';
+import { gql, useQuery } from '@apollo/client';
+import { fromEvent } from 'rxjs';
 
-interface Props {
+interface IProps {
+  postId: number;
   thumbnail: string;
   name: string;
   explanation: string;
@@ -16,30 +20,32 @@ interface Props {
   tags: serversQueryGql_articles_tags[] | null;
 }
 
-export const ServerButton: React.FC<Props> = ({
-                                                thumbnail,
-                                                name,
-                                                explanation,
-                                                discord,
-                                                homepage,
-                                                tags,
-                                              }) => (
-  <div
-    className="grid grid-cols-12 p-4 shadow-sm rounded-xl bg-white cursor-pointer transition duration-300 transform hover:-translate-y-1 hover:shadow-xl">
+export const ServerButton: React.FC<IProps> = ({
+  postId,
+  thumbnail,
+  name,
+  explanation,
+  discord,
+  homepage,
+  tags,
+}) => (
+  <div className="grid grid-cols-12 p-4 shadow-sm rounded-xl bg-white transition duration-300 transform hover:-translate-y-1 hover:shadow-xl">
     <img
       className="col-span-3 bg-blue-300 rounded-full h-24 w-24 overflow-hidden shadow-sm"
       src={thumbnail}
       alt="thumbnail"
     />
     <div className="max-h-full col-span-9 mr-3 flex flex-col justify-between">
-      <div className="flex flex-col">
-        <p className="font-sans-kr text-xl mb-1 overflow-hidden overflow-ellipsis line-clamp-1 text-gray-700">
-          {name}
-        </p>
-        <p className="font-sans-kr text-xs text-gray-400 overflow-ellipsis overflow-hidden line-clamp-2">
-          {explanation}
-        </p>
-      </div>
+      <Link to={`post/${postId}`} className="hover:no-underline cursor-pointer">
+        <div className="flex flex-col">
+          <p className="font-sans-kr text-xl mb-1 overflow-hidden overflow-ellipsis line-clamp-1 text-gray-700">
+            {name}
+          </p>
+          <p className="font-sans-kr text-xs text-gray-400 overflow-ellipsis overflow-hidden line-clamp-2">
+            {explanation}
+          </p>
+        </div>
+      </Link>
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center">
           <a className="hover:no-underline" href={discord}>
@@ -57,25 +63,7 @@ export const ServerButton: React.FC<Props> = ({
             />
           </a>
         </div>
-        <ul className="flex flex-row">
-          {tags?.map((tag, i) => {
-            if (i < 3) {
-              return (
-                <li className="mr-1">
-                  <div
-                    className="pt-1 pb-1 flex items-center space-x-1 text-sm px-2 bg-gray-200 text-gray-800 rounded-full">
-                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full">
-                      &nbsp;
-                    </div>
-                    <p className="w-10 text-xs overflow-hidden overflow-ellipsis whitespace-nowrap">
-                      {tag.name}
-                    </p>
-                  </div>
-                </li>
-              );
-            }
-          })}
-        </ul>
+        <TagBadgeList tags={tags?.map((tag) => tag.name)} />
       </div>
     </div>
   </div>
@@ -84,6 +72,7 @@ export const ServerButton: React.FC<Props> = ({
 export const SERVERS_QUERY_GQL = gql`
   query serversQueryGql($offset: Float!, $limit: Float!) {
     articles(offset: $offset, limit: $limit) {
+      id
       thumbnail
       name
       explanation
@@ -99,7 +88,7 @@ export const SERVERS_QUERY_GQL = gql`
 const ServerInfiniteList: React.FC = () => {
   const [servers, setServers] = React.useState<serversQueryGql_articles[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const {fetchMore} = useQuery<serversQueryGql, serversQueryGqlVariables>(
+  const { fetchMore } = useQuery<serversQueryGql, serversQueryGqlVariables>(
     SERVERS_QUERY_GQL,
     {
       variables: {
@@ -107,7 +96,7 @@ const ServerInfiniteList: React.FC = () => {
         limit: 10,
       },
       fetchPolicy: 'cache-and-network',
-      onCompleted: ({articles}) => {
+      onCompleted: ({ articles }) => {
         setServers(articles);
       },
     },
@@ -134,9 +123,11 @@ const ServerInfiniteList: React.FC = () => {
   }, [loading, onLoadMore]);
 
   React.useEffect(() => {
-    window.addEventListener('scroll', scrollEventHandler);
+    const subscription$ = fromEvent(document, 'scroll').subscribe({
+      next: scrollEventHandler,
+    });
     return () => {
-      window.removeEventListener('scroll', scrollEventHandler);
+      subscription$.unsubscribe();
     };
   }, [scrollEventHandler]);
 
@@ -144,28 +135,52 @@ const ServerInfiniteList: React.FC = () => {
     <div>
       <div className="mb-3 grid grid-cols-2 gap-3">
         {servers.map(
-          ({thumbnail, name, explanation, discord, homepage, tags}, k) => (
+          (
+            { id, thumbnail, name, explanation, discord, homepage, tags },
+            key,
+          ) => (
             <ServerButton
+              postId={id}
               thumbnail={thumbnail}
               name={name}
               explanation={explanation}
               discord={discord}
               homepage={homepage}
               tags={tags}
-              key={k}
+              key={`mcsb-${key}`}
             />
           ),
         )}
       </div>
       <div className="mt-8 flex justify-center items-center">
-        {loading ?
-          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4">&nbsp;</circle>
-            <path className="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">&nbsp;</path>
+        {loading ? (
+          <svg
+            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            >
+              &nbsp;
+            </circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            >
+              &nbsp;
+            </path>
           </svg>
-          : <></>}
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

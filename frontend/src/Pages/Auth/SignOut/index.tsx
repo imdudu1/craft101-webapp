@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { LOCALSTORAGE_TOKEN_KEY } from '../../../constants';
 import { authTokenVar, isLoggedInVar } from '../../../apollo';
 
-const SignOut = () => {
+const SignOutPage = () => {
   useEffect(() => {
     localStorage.removeItem(LOCALSTORAGE_TOKEN_KEY);
     isLoggedInVar(false);
@@ -12,4 +12,4 @@ const SignOut = () => {
   return <Redirect to="/" />;
 };
 
-export default SignOut;
+export default SignOutPage;

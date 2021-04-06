@@ -3,7 +3,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { authTokenVar, isLoggedInVar } from '../../../apollo';
 import { LOCALSTORAGE_TOKEN_KEY } from '../../../constants';
 
-interface IKakaoAuth {
+interface IKakaoAuthProps {
   token: string;
 }
 
@@ -11,7 +11,7 @@ const KakaoAuthPage = ({
   match: {
     params: { token },
   },
-}: RouteComponentProps<IKakaoAuth>) => {
+}: RouteComponentProps<IKakaoAuthProps>) => {
   const isLoggedIn = isLoggedInVar();
   if (!isLoggedIn) {
     isLoggedInVar(true);

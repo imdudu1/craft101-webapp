@@ -19,6 +19,7 @@ import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
 import { AppController } from './app.controller';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
+import { LiveMcModule } from './live-mc/live-mc.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
     ArticlesModule,
     UsersModule,
     AuthModule,
+    LiveMcModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -12,10 +12,10 @@ const Header: React.FC = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   return (
-    <header className="bg-white border-b sticky">
+    <header className="bg-white border-b sticky mb-4">
       <div className="container h-20 mx-auto flex justify-between items-center">
         <Link to="/">
-          <img className="w-40" src="images/logo.png" alt="logo" />
+          <img className="w-40" src="/images/logo.png" alt="logo" />
         </Link>
         <nav>
           <ul className="flex items-center">
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
             </li>
             {isLoggedIn ? (
               <Link to="/signout">
-                <li className="h-20 w-24 px-3 border-opacity-10 border-l border-r flex justify-center items-center hover:bg-gray-50">
+                <li className="h-20 w-24 px-3 border-opacity-10 border-l border-r flex justify-center items-center hover:bg-red-50">
                   <ExitToAppIcon />
                 </li>
               </Link>
