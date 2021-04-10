@@ -1,22 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Tags } from './tags.entity';
 import { Categories } from './categories.entity';
+import { CommonEntity } from 'src/common/entities/common.entity';
 
 @ObjectType()
 @Entity()
-export class Articles {
-  @Field(() => Number)
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Articles extends CommonEntity {
   @Field(() => String)
   @Column()
   thumbnail: string;

@@ -9,6 +9,7 @@ enum AccountType {
 
 type Articles {
   category: Categories!
+  createdAt: DateTime!
   discord: String!
   explanation: String!
   homepage: String!
@@ -16,13 +17,21 @@ type Articles {
   name: String!
   tags: [Tags!]
   thumbnail: String!
+  updatedAt: DateTime!
 }
 
 type Categories {
   articles: [Articles!]!
+  createdAt: DateTime!
   id: Float!
   name: String!
+  updatedAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Mutation {
   confirmCertifyEmailCode: Boolean!
@@ -43,8 +52,10 @@ type Query {
 
 type Tags {
   articles: [Articles!]!
+  createdAt: DateTime!
   id: Float!
   name: String!
+  updatedAt: DateTime!
 }
 
 enum UserRole {
@@ -55,10 +66,12 @@ enum UserRole {
 type Users {
   accountType: AccountType!
   certifyEmail: Boolean!
+  createdAt: DateTime!
   email: String!
   id: Float!
   nickname: String!
   password: String!
   role: UserRole!
+  updatedAt: DateTime!
   username: String!
 }

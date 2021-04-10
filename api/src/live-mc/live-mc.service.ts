@@ -6,5 +6,7 @@ import { Socket } from 'socket.io';
 export class LiveMcService {
   constructor(private readonly authService: AuthService) {}
 
-  async getUserFromSocket(socket: Socket) {}
+  async getUserFromSocket(socket: Socket) {
+    /* empty */
+  }
 }

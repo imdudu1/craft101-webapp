@@ -8,6 +8,7 @@ import {
 import * as argon2 from 'argon2';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IsEnum } from 'class-validator';
+import { CommonEntity } from 'src/common/entities/common.entity';
 
 export enum UserRole {
   USER = 'USER',
@@ -23,11 +24,7 @@ registerEnumType(AccountType, { name: 'AccountType' });
 
 @ObjectType()
 @Entity()
-export class Users {
-  @Field(() => Number)
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Users extends CommonEntity {
   @Field(() => String)
   @Column()
   username: string;
