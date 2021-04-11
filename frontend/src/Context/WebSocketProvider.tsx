@@ -8,7 +8,10 @@ interface WebSocketProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;
 }
 
-const WebSocketProvider = ({ client, children }: WebSocketProviderProps) => {
+export const WebSocketProvider = ({
+  client,
+  children,
+}: WebSocketProviderProps) => {
   const WebSocketContext = getWebSocketContext();
 
   useEffect(() => {
@@ -33,5 +36,3 @@ const WebSocketProvider = ({ client, children }: WebSocketProviderProps) => {
     </WebSocketContext.Consumer>
   );
 };
-
-export default WebSocketProvider;

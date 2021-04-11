@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import { WEBSOCKET_URL } from './constants';
 
 export class LiveMC {
   private readonly client: WebSocket;
@@ -10,9 +11,7 @@ export class LiveMC {
     this.events = new Map();
     this.client = new WebSocket(host);
 
-    this.client.onmessage = (event) => {
-      this.onMessage(event);
-    };
+    this.client.onmessage = (event) => this.onMessage(event);
 
     setTimeout(() => {
       this.client.send(
@@ -59,3 +58,5 @@ export class LiveMC {
     return new Subject<string>();
   }
 }
+
+export const client = new LiveMC(WEBSOCKET_URL);
