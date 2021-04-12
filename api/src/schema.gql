@@ -7,12 +7,19 @@ enum AccountType {
   LOCAL
 }
 
+type ArticleDetailOutputDto {
+  article: Articles
+  error: String
+  ok: Boolean!
+}
+
 type Articles {
   category: Categories!
   createdAt: DateTime!
   discord: String!
   explanation: String!
   homepage: String!
+  host: String!
   id: Float!
   name: String!
   tags: [Tags!]
@@ -33,6 +40,17 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type MCStatus {
+  description: String!
+  favicon: String!
+  host: String!
+  maxPlayers: Float!
+  onlinePlayers: Float!
+  port: Float!
+  protocolVersion: Float!
+  version: String!
+}
+
 type Mutation {
   confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
@@ -43,11 +61,19 @@ type Mutation {
 }
 
 type Query {
-  article(id: Float!): Articles!
+  article(id: Float!): ArticleDetailOutputDto!
   articles(limit: Float!, offset: Float!): [Articles!]!
   login(password: String!, username: String!): String!
   me: Users!
+  serverArticle(id: Float!): ServerArticleDetailOutputDto!
   tagArticles(tag: String!): [Articles!]!
+}
+
+type ServerArticleDetailOutputDto {
+  article: Articles
+  error: String
+  ok: Boolean!
+  status: MCStatus
 }
 
 type Tags {

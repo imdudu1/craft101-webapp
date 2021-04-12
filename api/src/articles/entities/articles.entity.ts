@@ -1,9 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Tags } from './tags.entity';
 import { Categories } from './categories.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
 
+@InputType('ArticleInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Articles extends CommonEntity {
@@ -22,6 +23,10 @@ export class Articles extends CommonEntity {
   @Field(() => String)
   @Column()
   discord: string;
+
+  @Field(() => String)
+  @Column({ default: 'localhost', nullable: true })
+  host: string;
 
   @Field(() => String)
   @Column()

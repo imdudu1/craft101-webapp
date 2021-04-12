@@ -5,14 +5,46 @@ import { Articles } from './entities/articles.entity';
 import { ArticlesService } from './articles.service';
 import { Categories } from './entities/categories.entity';
 import { Tags } from './entities/tags.entity';
+import {
+  ArticleDetailOutputDto,
+  ServerArticleDetailOutputDto,
+} from './dtos/article-detail.dto';
+import { LiveMCService } from '../live-mc/live-mc.service';
+import { McStatusOutputDto } from '../live-mc/dtos/mc-status-output.dto';
 
 @Resolver(() => Articles)
 export class ArticlesResolver {
-  constructor(private readonly articleService: ArticlesService) {}
+  constructor(
+    private readonly articleService: ArticlesService,
+    private readonly liveMCService: LiveMCService,
+  ) {}
 
-  @Query(() => Articles)
-  async article(@Args('id') id: number): Promise<Articles> {
+  @Query(() => ArticleDetailOutputDto)
+  async article(@Args('id') id: number): Promise<ArticleDetailOutputDto> {
     return this.articleService.findArticleById(id);
+  }
+
+  @Query(() => ServerArticleDetailOutputDto)
+  async serverArticle(
+    @Args('id') id: number,
+  ): Promise<ServerArticleDetailOutputDto> {
+    const { article, ok, error } = await this.articleService.findArticleById(
+      id,
+    );
+    let status: McStatusOutputDto = null;
+    if (ok) {
+      const { host } = article;
+      status = await this.liveMCService.getMCServerStatus(host);
+      return {
+        ok: true,
+        article: article,
+        status: status?.status,
+      };
+    }
+    return {
+      ok,
+      error,
+    };
   }
 
   @Query(() => [Articles])

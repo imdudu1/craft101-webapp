@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LiveMcService } from './live-mc.service';
+import { LiveMCService } from './live-mc.service';
 
-describe('LiveMcService', () => {
-  let service: LiveMcService;
+describe('LiveMCService', () => {
+  let service: LiveMCService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LiveMcService],
+      providers: [LiveMCService],
     }).compile();
 
-    service = module.get<LiveMcService>(LiveMcService);
+    service = module.get<LiveMCService>(LiveMCService);
   });
 
   it('should be defined', () => {

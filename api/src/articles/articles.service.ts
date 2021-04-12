@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Articles } from './entities/articles.entity';
 import { Repository } from 'typeorm';
@@ -7,18 +7,16 @@ import { UpdateArticleDto } from './dtos/update-article.dto';
 import { TagsRepository } from './repositories/tag.repository';
 import { Tags } from './entities/tags.entity';
 import { Categories } from './entities/categories.entity';
-import { Cache } from 'cache-manager';
+import { ArticleDetailOutputDto } from './dtos/article-detail.dto';
 
 @Injectable()
 export class ArticlesService {
   constructor(
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
+    private readonly tagsRepository: TagsRepository,
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
     @InjectRepository(Categories)
     private readonly categoriesRepository: Repository<Categories>,
-    private readonly tagsRepository: TagsRepository,
   ) {}
 
   //--START: Article methods
@@ -33,10 +31,18 @@ export class ArticlesService {
       .getMany();
   }
 
-  async findArticleById(id: number): Promise<Articles> {
-    return this.articlesRepository.findOne({
-      id,
-    });
+  async findArticleById(id: number): Promise<ArticleDetailOutputDto> {
+    try {
+      const article = await this.articlesRepository.findOneOrFail({
+        id,
+      });
+      return {
+        ok: true,
+        article,
+      };
+    } catch (e) {
+      return { ok: false, error: 'Article not found.' };
+    }
   }
 
   async tagArticles(tagName: string): Promise<Articles[]> {

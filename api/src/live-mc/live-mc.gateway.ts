@@ -5,16 +5,16 @@ import {
   WsResponse,
 } from '@nestjs/websockets';
 import { Server } from 'ws';
-import { LiveMcService } from './live-mc.service';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LiveMCService } from './live-mc.service';
 
 @WebSocketGateway(4001)
-export class LiveMcGateway {
+export class LiveMCGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly liveMcService: LiveMcService) {}
+  constructor(private readonly liveMCService: LiveMCService) {}
 
   @SubscribeMessage('message')
   handleMessage(client: any, data: any): Observable<WsResponse<number>> {

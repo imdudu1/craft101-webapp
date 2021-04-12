@@ -6,6 +6,7 @@ import { Articles } from './entities/articles.entity';
 import { TagsRepository } from './repositories/tag.repository';
 import { Categories } from './entities/categories.entity';
 import * as redisStore from 'cache-manager-redis-store';
+import { LiveMCModule } from '../live-mc/live-mc.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import * as redisStore from 'cache-manager-redis-store';
       port: +process.env.REDIS_PORT,
     }),
     TypeOrmModule.forFeature([Articles, Categories, TagsRepository]),
+    LiveMCModule,
   ],
   providers: [ArticlesResolver, ArticlesService],
 })
