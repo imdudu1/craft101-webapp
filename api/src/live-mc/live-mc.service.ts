@@ -2,8 +2,8 @@ import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { StatusOptions } from 'minecraft-server-util/dist/model/Options';
 import { McStatusOutputDto } from './dtos/mc-status-output.dto';
-import { StatusResponse } from 'minecraft-server-util/dist/model/StatusResponse';
 import * as msc from 'minecraft-server-util';
+import { MCStatus } from './types/mc-status.type';
 
 @Injectable()
 export class LiveMCService {
@@ -13,11 +13,15 @@ export class LiveMCService {
     host: string,
     options?: StatusOptions,
   ): Promise<McStatusOutputDto> {
-    let value = await this.cacheManager.get<StatusResponse>(host);
+    let value = await this.cacheManager.get<MCStatus>(host);
     if (!value) {
       try {
-        value = await msc.status(host, options);
-        await this.cacheManager.set<StatusResponse>(host, value, { ttl: 180 });
+        const status = await msc.status(host, options);
+        value = Object.assign(new MCStatus(), {
+          ...status,
+          description: status.description.toString(),
+        });
+        await this.cacheManager.set<MCStatus>(host, value, { ttl: 180 });
       } catch (e) {
         return {
           ok: false,
@@ -27,10 +31,7 @@ export class LiveMCService {
     }
     return {
       ok: true,
-      status: {
-        ...value,
-        description: value.description.toString(),
-      },
+      status: value,
     };
   }
 }

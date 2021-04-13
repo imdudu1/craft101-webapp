@@ -1,10 +1,10 @@
 import React from 'react';
-import LiveStateBar from '../../Components/Home/LiveStateBar';
+import { Helmet } from 'react-helmet-async';
 import LineNewsBar from '../../Components/Home/LineNewsBar';
-import SectionTitle from '../../Components/SectionTitle';
+import LiveStateBar from '../../Components/Home/LiveStateBar';
 import ServerInfiniteList from '../../Components/Home/ServerInfiniteList';
 import { TwitchCardList } from '../../Components/Home/TwitchCardList';
-import { Helmet } from 'react-helmet-async';
+import SectionTitle from '../../Components/SectionTitle';
 
 const HomePage: React.FC = () => (
   <React.Fragment>

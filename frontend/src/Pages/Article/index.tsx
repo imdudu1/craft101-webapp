@@ -1,15 +1,18 @@
-import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client';
-import {
-  ArticleQueryGql,
-  ArticleQueryGqlVariables,
-} from '../../__generated__/ArticleQueryGql';
-import IconHeaderBox from '../../Components/Article/IconHeaderBox';
-import TagBadgeList from '../../Components/TagBadge';
+import { gql } from '@apollo/client/core';
+import Avatar from '@material-ui/core/Avatar';
+import Chip from '@material-ui/core/Chip';
+import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { Helmet } from 'react-helmet-async';
+import { RouteComponentProps } from 'react-router-dom';
+import IconHeaderBox from '../../Components/Article/IconHeaderBox';
+import {
+  ServerArticleQueryGql,
+  ServerArticleQueryGqlVariables,
+  ServerArticleQueryGql_serverArticle_article,
+  ServerArticleQueryGql_serverArticle_status,
+} from '../../__generated__/ServerArticleQueryGql';
 
 const basicData = {
   series: [
@@ -332,18 +335,49 @@ const basicData = {
 
   selection: 'one_year',
 };
+const radarData = {
+  series: [
+    {
+      name: 'Series 1',
+      data: [80, 50, 30, 40, 100, 20],
+    },
+  ],
+  options: {
+    chart: {
+      height: 350,
+      type: 'radar',
+    },
+    title: {
+      text: '서버 추천인 평균 나이대',
+    },
+    xaxis: {
+      categories: ['January', 'February', 'March', 'April', 'May', 'June'],
+    },
+  },
+};
 
-export const ARTICLE_QUERY_GQL = gql`
-  query ArticleQueryGql($id: Float!) {
-    article(id: $id) {
-      name
-      thumbnail
-      homepage
-      explanation
-      discord
-      tags {
-        id
+export const SERVER_ARTICLE_QUERY_GQL = gql`
+  query ServerArticleQueryGql($id: Float!) {
+    serverArticle(id: $id) {
+      article {
         name
+        thumbnail
+        homepage
+        explanation
+        discord
+        tags {
+          id
+          name
+        }
+      }
+      status {
+        host
+        port
+        protocolVersion
+        maxPlayers
+        onlinePlayers
+        description
+        version
       }
     }
   }
@@ -358,11 +392,26 @@ const PostViewPage = ({
     params: { postId },
   },
 }: RouteComponentProps<PostViewPageProps>) => {
-  const { data } = useQuery<ArticleQueryGql, ArticleQueryGqlVariables>(
-    ARTICLE_QUERY_GQL,
+  const [
+    article,
+    setArticle,
+  ] = useState<ServerArticleQueryGql_serverArticle_article | null>(null);
+  const [
+    status,
+    setStatus,
+  ] = useState<ServerArticleQueryGql_serverArticle_status | null>(null);
+  useQuery<ServerArticleQueryGql, ServerArticleQueryGqlVariables>(
+    SERVER_ARTICLE_QUERY_GQL,
     {
       variables: {
         id: +postId,
+      },
+      onCompleted: (data) => {
+        const {
+          serverArticle: { article, status },
+        } = data;
+        setArticle(article);
+        setStatus(status);
       },
     },
   );
@@ -378,40 +427,72 @@ const PostViewPage = ({
           <div className="flex items-center gap-2 border-b border-gray-100 p-6">
             <img
               className="col-span-3 bg-blue-300 rounded-full h-24 w-24 overflow-hidden shadow-sm"
-              src={`${data?.article.thumbnail}`}
+              src={`${article?.thumbnail}`}
               alt=""
             />
             <div className="flex flex-col ml-3">
-              <h1 className="font-sans-kr text-2xl mb-2 subpixel-antialiased text-gray-800">
-                {data?.article.name}
+              <h1 className="font-sans-kr text-2xl mb-1 subpixel-antialiased text-gray-800">
+                {article?.name}
               </h1>
-              <TagBadgeList tags={data?.article.tags?.map((tag) => tag.name)} />
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-2 border-b border-gray-100 p-6">
-            <div className="col-span-4">
-              <div className="grid grid-cols-2 gap-2">
-                <IconHeaderBox icon={'😀'}>
-                  <p className="font-sans-kr text-sm">999 / 999</p>
-                </IconHeaderBox>
-                <IconHeaderBox icon={'😀'}>
-                  <p className="font-sans-kr text-sm">999 / 999</p>
-                </IconHeaderBox>
-                <IconHeaderBox icon={'😀'}>
-                  <p className="font-sans-kr text-sm">999 / 999</p>
-                </IconHeaderBox>
-                <IconHeaderBox icon={'😀'}>
-                  <p className="font-sans-kr text-sm">999 / 999</p>
-                </IconHeaderBox>
+              <span className="font-sans-kr text-gray-500 text-sm mb-2">
+                {status?.description}
+              </span>
+              <div>
+                {article?.tags?.map((tag) => (
+                  <Chip
+                    className="mr-1"
+                    size="small"
+                    avatar={<Avatar>🏷️</Avatar>}
+                    label={tag.name}
+                    color="primary"
+                  />
+                ))}
               </div>
             </div>
-            <div className="col-span-8">
+          </div>
+          <div className="grid grid-cols-4 divide-x gap-2 border-b border-gray-100 p-6">
+            <IconHeaderBox icon={'⛏️'} description={'플레이어 정보'}>
+              <span className="font-sans-kr text-gray-600 font-bold text-2xl">
+                {status?.onlinePlayers}/{status?.maxPlayers}
+              </span>
+            </IconHeaderBox>
+            <IconHeaderBox icon={'👍'} description={'사용자 추천'}>
+              <span className="font-sans-kr text-gray-600 font-bold text-2xl">
+                999
+              </span>
+            </IconHeaderBox>
+            <IconHeaderBox icon={'🧱'} description={'클라이언트 버전'}>
+              <span className="font-sans-kr text-gray-600 font-bold text-2xl">
+                {status?.version}
+              </span>
+            </IconHeaderBox>
+            <IconHeaderBox icon={'🔑'} description={'서버 주소'}>
+              <span className="font-sans-kr text-gray-600 font-bold text-2xl">
+                {status?.host}
+                {status?.port === 25565 ? '' : `:${status?.port}`}
+              </span>
+            </IconHeaderBox>
+          </div>
+          <div className="p-6 border-b border-gray-100">
+            <p>{article?.explanation}</p>
+          </div>
+          <div className="grid grid-cols-6 border-b border-gray-100 p-6">
+            <div className="col-span-4">
               <ReactApexChart
                 options={basicData.options}
                 series={basicData.series}
                 type="area"
                 width="100%"
-                height="200"
+                height="250"
+              />
+            </div>
+            <div className="col-span-2">
+              <ReactApexChart
+                options={radarData.options}
+                series={radarData.series}
+                type="radar"
+                width="100%"
+                height="250"
               />
             </div>
           </div>
