@@ -1,6 +1,7 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { CacheModule, forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
+import { PlayerHistories } from '../live-mc/entities/player-histories.entity';
 import { LiveMCModule } from '../live-mc/live-mc.module';
 import { ArticlesResolver } from './articles.resolver';
 import { ArticlesService } from './articles.service';
@@ -15,9 +16,15 @@ import { TagsRepository } from './repositories/tag.repository';
       host: process.env.REDIS_HOST,
       port: +process.env.REDIS_PORT,
     }),
-    TypeOrmModule.forFeature([Articles, Categories, TagsRepository]),
-    LiveMCModule,
+    TypeOrmModule.forFeature([
+      Articles,
+      Categories,
+      TagsRepository,
+      PlayerHistories,
+    ]),
+    forwardRef(() => LiveMCModule),
   ],
   providers: [ArticlesResolver, ArticlesService],
+  exports: [ArticlesService],
 })
 export class ArticlesModule {}

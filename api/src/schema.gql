@@ -13,7 +13,13 @@ type ArticleDetailOutputDto {
   ok: Boolean!
 }
 
+enum ArticleType {
+  AD
+  FREE
+}
+
 type Articles {
+  articleType: ArticleType!
   category: Categories!
   createdAt: DateTime!
   discord: String!

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ArticleDetailOutputDto } from './dtos/article-detail.dto';
 import { CreateArticleDto } from './dtos/create-article.dto';
 import { UpdateArticleDto } from './dtos/update-article.dto';
-import { Articles } from './entities/articles.entity';
+import { Articles, ArticleType } from './entities/articles.entity';
 import { Categories } from './entities/categories.entity';
 import { Tags } from './entities/tags.entity';
 import { TagsRepository } from './repositories/tag.repository';
@@ -20,7 +20,7 @@ export class ArticlesService {
   ) {}
 
   //--START: Article methods
-  async allArticles(offset: number, limit: number): Promise<Articles[]> {
+  async paginateArticles(offset: number, limit: number): Promise<Articles[]> {
     const count = await this.articlesRepository.createQueryBuilder().getCount();
     if (count < offset) return [];
 
@@ -29,6 +29,16 @@ export class ArticlesService {
       .offset(offset)
       .limit(limit)
       .getMany();
+  }
+
+  async allArticles(): Promise<Articles[]> {
+    return this.articlesRepository.find();
+  }
+
+  async allAdArticles(): Promise<Articles[]> {
+    return this.articlesRepository.find({
+      articleType: ArticleType.AD,
+    });
   }
 
   async findArticleById(id: number): Promise<ArticleDetailOutputDto> {
@@ -62,7 +72,8 @@ export class ArticlesService {
       // TODO: 최적화를 위해 없는 태그에 대해 개별적인 INSERT가 아닌 일괄 INSERT가 되도록 수정
       await Promise.all(
         tags.map(async (tag) => {
-          convertedTags.push(await this.tagsRepository.getOrCreate(tag));
+          const tagObj = await this.tagsRepository.getOrCreate(tag);
+          convertedTags.push(tagObj);
         }),
       );
     }

@@ -49,7 +49,7 @@ export class ArticlesResolver {
     @Args('offset') offset: number,
     @Args('limit') limit: number,
   ): Promise<Articles[]> {
-    return this.articleService.allArticles(offset, limit);
+    return this.articleService.paginateArticles(offset, limit);
   }
 
   @Query(() => [Articles])

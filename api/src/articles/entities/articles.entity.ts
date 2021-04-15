@@ -1,4 +1,10 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
+import { IsEnum } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import {
   Column,
@@ -8,9 +14,15 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import { PlayerHistories } from '../../live-mc/entities/player-histories.entity';
 import { Categories } from './categories.entity';
-import { PlayerHistories } from './player-histories.entity';
 import { Tags } from './tags.entity';
+
+export enum ArticleType {
+  AD = 'AD',
+  FREE = 'FREE',
+}
+registerEnumType(ArticleType, { name: 'ArticleType' });
 
 @InputType('ArticleInputType', { isAbstract: true })
 @ObjectType()
@@ -60,4 +72,9 @@ export class Articles extends CommonEntity {
     cascade: ['insert'],
   })
   playerHistories: PlayerHistories[];
+
+  @Field(() => ArticleType)
+  @Column({ type: 'enum', enum: ArticleType })
+  @IsEnum(ArticleType)
+  articleType: ArticleType;
 }
