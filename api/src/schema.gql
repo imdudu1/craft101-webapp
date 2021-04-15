@@ -21,7 +21,9 @@ type Articles {
   homepage: String!
   host: String!
   id: Float!
+  likeCount: Float!
   name: String!
+  playerHistories: [PlayerHistories!]!
   tags: [Tags!]
   thumbnail: String!
   updatedAt: DateTime!
@@ -58,6 +60,14 @@ type Mutation {
   newArticle(category: Float!, discord: String!, explanation: String!, homepage: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   requestCertifyEmail: Boolean!
   updateArticle(category: Float, discord: String, explanation: String, homepage: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
+}
+
+type PlayerHistories {
+  article: Articles!
+  createdAt: DateTime!
+  id: Float!
+  onlinePlayers: Float!
+  updatedAt: DateTime!
 }
 
 type Query {

@@ -16,6 +16,7 @@ export interface ServerArticleQueryGql_serverArticle_article_tags {
 export interface ServerArticleQueryGql_serverArticle_article {
   __typename: "Articles";
   name: string;
+  host: string;
   thumbnail: string;
   homepage: string;
   explanation: string;

@@ -1,8 +1,8 @@
+import axios from 'axios';
 import React from 'react';
 import useSWR from 'swr';
-import axios from 'axios';
 
-interface IChannel {
+interface ChannelProps {
   status: string;
   url: string;
   display_name: string;
@@ -11,7 +11,7 @@ interface IChannel {
   logo: string;
 }
 
-interface IPreview {
+interface PreviewProps {
   large: string;
   medium: string;
   small: string;
@@ -19,15 +19,15 @@ interface IPreview {
 }
 
 interface IStream {
-  channel: IChannel;
-  preview: IPreview;
+  channel: ChannelProps;
+  preview: PreviewProps;
 }
 
-interface IStreams {
+interface StreamsProps {
   streams: IStream[];
 }
 
-interface IProps {
+interface TwitchCardProps {
   status: string;
   displayName: string;
   name: string;
@@ -36,7 +36,7 @@ interface IProps {
   thumbnail: string;
 }
 
-export const TwitchCard: React.FC<IProps> = ({
+export const TwitchCard: React.FC<TwitchCardProps> = ({
   status,
   thumbnail,
   displayName,
@@ -67,7 +67,7 @@ export const TwitchCard: React.FC<IProps> = ({
 );
 
 export const TwitchCardList: React.FC = () => {
-  const { data } = useSWR<IStreams>(
+  const { data } = useSWR<StreamsProps>(
     [
       'https://api.twitch.tv/kraken/search/streams?query=Minecraft',
       'm672k7f5wjo1sbk5y1ioi23h0gb2yj',
@@ -84,7 +84,7 @@ export const TwitchCardList: React.FC = () => {
   );
 
   return (
-    <div className="pb-3 flex flex-row overflow-x-scroll whitespace-nowrap scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300 ">
+    <div className="pb-3 flex flex-row overflow-x-scroll whitespace-nowrap scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300">
       {data?.streams.map(
         (
           {

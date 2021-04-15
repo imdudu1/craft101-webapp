@@ -1,8 +1,16 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { Tags } from './tags.entity';
-import { Categories } from './categories.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { Categories } from './categories.entity';
+import { PlayerHistories } from './player-histories.entity';
+import { Tags } from './tags.entity';
 
 @InputType('ArticleInputType', { isAbstract: true })
 @ObjectType()
@@ -25,12 +33,20 @@ export class Articles extends CommonEntity {
   discord: string;
 
   @Field(() => String)
-  @Column({ default: 'localhost', nullable: true })
+  @Column()
   host: string;
 
   @Field(() => String)
   @Column()
   homepage: string;
+
+  @Field(() => Categories)
+  @ManyToOne(() => Categories, (category) => category.articles)
+  category: Categories;
+
+  @Field(() => Number)
+  @Column()
+  likeCount: number;
 
   @Field(() => [Tags], { nullable: true })
   @ManyToMany(() => Tags, (tag) => tag.articles, {
@@ -39,7 +55,9 @@ export class Articles extends CommonEntity {
   @JoinTable()
   tags?: Promise<Tags[]>;
 
-  @Field(() => Categories)
-  @ManyToOne(() => Categories, (category) => category.articles)
-  category: Categories;
+  @Field(() => [PlayerHistories])
+  @OneToMany(() => PlayerHistories, (playerHistory) => playerHistory.article, {
+    cascade: ['insert'],
+  })
+  playerHistories: PlayerHistories[];
 }

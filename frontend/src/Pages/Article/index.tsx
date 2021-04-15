@@ -361,6 +361,7 @@ export const SERVER_ARTICLE_QUERY_GQL = gql`
     serverArticle(id: $id) {
       article {
         name
+        host
         thumbnail
         homepage
         explanation
@@ -468,8 +469,7 @@ const PostViewPage = ({
             </IconHeaderBox>
             <IconHeaderBox icon={'🔑'} description={'서버 주소'}>
               <span className="font-sans-kr text-gray-600 font-bold text-2xl">
-                {status?.host}
-                {status?.port === 25565 ? '' : `:${status?.port}`}
+                {article?.host}
               </span>
             </IconHeaderBox>
           </div>

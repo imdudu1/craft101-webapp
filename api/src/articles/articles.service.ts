@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Articles } from './entities/articles.entity';
 import { Repository } from 'typeorm';
+import { ArticleDetailOutputDto } from './dtos/article-detail.dto';
 import { CreateArticleDto } from './dtos/create-article.dto';
 import { UpdateArticleDto } from './dtos/update-article.dto';
-import { TagsRepository } from './repositories/tag.repository';
-import { Tags } from './entities/tags.entity';
+import { Articles } from './entities/articles.entity';
 import { Categories } from './entities/categories.entity';
-import { ArticleDetailOutputDto } from './dtos/article-detail.dto';
+import { Tags } from './entities/tags.entity';
+import { TagsRepository } from './repositories/tag.repository';
 
 @Injectable()
 export class ArticlesService {
@@ -67,12 +67,11 @@ export class ArticlesService {
       );
     }
     // 새 게시글 생성
-    const created2 = this.articlesRepository.create();
-    const created = Object.assign(created2, otherParts);
-    return this.articlesRepository.save({
-      ...created,
+    const created = Object.assign(this.articlesRepository.create(), {
+      ...otherParts,
       tags: Promise.resolve(convertedTags),
     });
+    return this.articlesRepository.save(created);
   }
 
   async updateArticle(

@@ -1,16 +1,16 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateArticleDto } from './dtos/create-article.dto';
-import { UpdateArticleDto } from './dtos/update-article.dto';
-import { Articles } from './entities/articles.entity';
+import { McStatusOutputDto } from '../live-mc/dtos/mc-status-output.dto';
+import { LiveMCService } from '../live-mc/live-mc.service';
 import { ArticlesService } from './articles.service';
-import { Categories } from './entities/categories.entity';
-import { Tags } from './entities/tags.entity';
 import {
   ArticleDetailOutputDto,
   ServerArticleDetailOutputDto,
 } from './dtos/article-detail.dto';
-import { LiveMCService } from '../live-mc/live-mc.service';
-import { McStatusOutputDto } from '../live-mc/dtos/mc-status-output.dto';
+import { CreateArticleDto } from './dtos/create-article.dto';
+import { UpdateArticleDto } from './dtos/update-article.dto';
+import { Articles } from './entities/articles.entity';
+import { Categories } from './entities/categories.entity';
+import { Tags } from './entities/tags.entity';
 
 @Resolver(() => Articles)
 export class ArticlesResolver {
@@ -31,19 +31,16 @@ export class ArticlesResolver {
     const { article, ok, error } = await this.articleService.findArticleById(
       id,
     );
-    let status: McStatusOutputDto = null;
+    let status: McStatusOutputDto | null = null;
     if (ok) {
       const { host } = article;
       status = await this.liveMCService.getMCServerStatus(host);
-      return {
-        ok: true,
-        article: article,
-        status: status?.status,
-      };
     }
     return {
       ok,
-      error,
+      article,
+      status: status?.status,
+      error: error || status?.error,
     };
   }
 

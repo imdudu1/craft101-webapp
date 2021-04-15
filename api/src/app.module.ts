@@ -4,22 +4,23 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { ArticlesModule } from './articles/articles.module';
-import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { Articles } from './articles/entities/articles.entity';
-import { Tags } from './articles/entities/tags.entity';
-import { Categories } from './articles/entities/categories.entity';
-import { Users } from './users/entities/users.entity';
-import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
 import { AppController } from './app.controller';
-import { AuthMiddleware } from './auth/middlewares/auth.middleware';
+import { ArticlesModule } from './articles/articles.module';
+import { Articles } from './articles/entities/articles.entity';
+import { Categories } from './articles/entities/categories.entity';
+import { PlayerHistories } from './articles/entities/player-histories.entity';
+import { Tags } from './articles/entities/tags.entity';
+import { AuthModule } from './auth/auth.module';
 import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
+import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
+import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 import { LiveMCModule } from './live-mc/live-mc.module';
+import { Users } from './users/entities/users.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { LiveMCModule } from './live-mc/live-mc.module';
         Users,
         OAuthTokens,
         CertifyEmailCodes,
+        PlayerHistories,
       ],
       synchronize: true,
       logging: 'all',
