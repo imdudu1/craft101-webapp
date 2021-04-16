@@ -1,16 +1,14 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { McStatusOutputDto } from '../live-mc/dtos/mc-status-output.dto';
-import { LiveMCService } from '../live-mc/live-mc.service';
-import { ArticlesService } from './articles.service';
+import { McStatusOutputDto } from '../../../live-mc/dtos/mc-status-output.dto';
+import { LiveMCService } from '../../../live-mc/live-mc.service';
 import {
   ArticleDetailOutputDto,
   ServerArticleDetailOutputDto,
-} from './dtos/article-detail.dto';
-import { CreateArticleDto } from './dtos/create-article.dto';
-import { UpdateArticleDto } from './dtos/update-article.dto';
-import { Articles } from './entities/articles.entity';
-import { Categories } from './entities/categories.entity';
-import { Tags } from './entities/tags.entity';
+} from '../../dtos/articleDtos/article-detail.dto';
+import { CreateArticleDto } from '../../dtos/articleDtos/create-article.dto';
+import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
+import { Articles } from '../../entities/articles.entity';
+import { ArticlesService } from '../../services/articles/articles.service';
 
 @Resolver(() => Articles)
 export class ArticlesResolver {
@@ -52,11 +50,6 @@ export class ArticlesResolver {
     return this.articleService.paginateArticles(offset, limit);
   }
 
-  @Query(() => [Articles])
-  async tagArticles(@Args('tag') tagName: string): Promise<Articles[]> {
-    return this.articleService.tagArticles(tagName);
-  }
-
   @Mutation(() => Articles)
   async newArticle(
     @Args() createArticleDto: CreateArticleDto,
@@ -75,40 +68,5 @@ export class ArticlesResolver {
   @Mutation(() => Boolean)
   async deleteArticle(@Args('id') id: number): Promise<boolean> {
     return this.articleService.deleteArticle(id);
-  }
-}
-
-@Resolver(() => Tags)
-export class TagResolver {
-  constructor(private readonly articleService: ArticlesService) {}
-
-  @Query(() => [Tags])
-  async tags(): Promise<Tags[]> {
-    return this.articleService.allTags();
-  }
-}
-
-@Resolver(() => Categories)
-export class CategoryResolver {
-  constructor(private readonly articleService: ArticlesService) {}
-
-  @Query(() => Categories)
-  async category(@Args('id') id: number): Promise<Categories> {
-    return this.articleService.findCategoryById(id);
-  }
-
-  @Query(() => [Categories])
-  async categories(): Promise<Categories[]> {
-    return this.articleService.allCategories();
-  }
-
-  @Mutation(() => Categories)
-  async newCategory(@Args('name') name: string): Promise<Categories> {
-    return this.articleService.createCategory(name);
-  }
-
-  @Mutation(() => Boolean)
-  async deleteCategory(@Args('id') id: number): Promise<boolean> {
-    return this.articleService.deleteCategory(id);
   }
 }

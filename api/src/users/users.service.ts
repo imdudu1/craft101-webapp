@@ -6,11 +6,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from './entities/users.entity';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { AuthService } from '../auth/auth.service';
+import { Users } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
