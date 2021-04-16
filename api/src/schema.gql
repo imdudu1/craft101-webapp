@@ -21,6 +21,7 @@ enum ArticleType {
 type Articles {
   articleType: ArticleType!
   category: Categories!
+  comments: [Comments!]!
   createdAt: DateTime!
   discord: String!
   explanation: String!
@@ -43,6 +44,19 @@ type Categories {
   updatedAt: DateTime!
 }
 
+type Comments {
+  article: Articles!
+  author: Users!
+  content: String!
+  createdAt: DateTime!
+  id: Float!
+  updatedAt: DateTime!
+}
+
+input CreateCommentDto {
+  content: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -62,8 +76,11 @@ type MCStatus {
 type Mutation {
   confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
+  deleteCategory(id: Float!): Boolean!
   newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
   newArticle(category: Float!, discord: String!, explanation: String!, homepage: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
+  newCategory(name: String!): Categories!
+  newComment(articleId: Float!, comment: CreateCommentDto!): Comments!
   requestCertifyEmail: Boolean!
   updateArticle(category: Float, discord: String, explanation: String, homepage: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
 }
@@ -79,10 +96,13 @@ type PlayerHistories {
 type Query {
   article(id: Float!): ArticleDetailOutputDto!
   articles(limit: Float!, offset: Float!): [Articles!]!
+  categories: [Categories!]!
+  category(id: Float!): Categories!
   login(password: String!, username: String!): String!
   me: Users!
   serverArticle(id: Float!): ServerArticleDetailOutputDto!
   tagArticles(tag: String!): [Articles!]!
+  tags: [Tags!]!
 }
 
 type ServerArticleDetailOutputDto {
@@ -108,6 +128,7 @@ enum UserRole {
 type Users {
   accountType: AccountType!
   certifyEmail: Boolean!
+  comments: [Comments!]!
   createdAt: DateTime!
   email: String!
   id: Float!

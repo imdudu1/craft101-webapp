@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Articles } from '../entities/articles.entity';
-import { CommonOutput } from '../../common/dtos/output.dto';
-import { MCStatus } from '../../live-mc/types/mc-status.type';
+import { CommonOutput } from '../../../common/dtos/output.dto';
+import { MCStatus } from '../../../live-mc/types/mc-status.type';
+import { Articles } from '../../entities/articles.entity';
 
 @ObjectType()
 export class ArticleDetailOutputDto extends CommonOutput {

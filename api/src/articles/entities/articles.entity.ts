@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 import { PlayerHistories } from '../../live-mc/entities/player-histories.entity';
 import { Categories } from './categories.entity';
+import { Comments } from './comments.entity';
 import { Tags } from './tags.entity';
 
 export enum ArticleType {
@@ -55,6 +56,10 @@ export class Articles extends CommonEntity {
   @Field(() => Categories)
   @ManyToOne(() => Categories, (category) => category.articles)
   category: Categories;
+
+  @Field(() => [Comments])
+  @OneToMany(() => Comments, (comment) => comment.article)
+  comments: Comments[];
 
   @Field(() => Number)
   @Column()

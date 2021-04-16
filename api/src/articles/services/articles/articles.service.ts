@@ -1,25 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ArticleDetailOutputDto } from './dtos/article-detail.dto';
-import { CreateArticleDto } from './dtos/create-article.dto';
-import { UpdateArticleDto } from './dtos/update-article.dto';
-import { Articles, ArticleType } from './entities/articles.entity';
-import { Categories } from './entities/categories.entity';
-import { Tags } from './entities/tags.entity';
-import { TagsRepository } from './repositories/tag.repository';
+import { ArticleDetailOutputDto } from '../../dtos/articleDtos/article-detail.dto';
+import { CreateArticleDto } from '../../dtos/articleDtos/create-article.dto';
+import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
+import { Articles, ArticleType } from '../../entities/articles.entity';
+import { Tags } from '../../entities/tags.entity';
+import { TagsService } from '../tags/tags.service';
 
 @Injectable()
 export class ArticlesService {
   constructor(
-    private readonly tagsRepository: TagsRepository,
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
-    @InjectRepository(Categories)
-    private readonly categoriesRepository: Repository<Categories>,
+    private readonly tagsService: TagsService,
   ) {}
 
-  //--START: Article methods
   async paginateArticles(offset: number, limit: number): Promise<Articles[]> {
     const count = await this.articlesRepository.createQueryBuilder().getCount();
     if (count < offset) return [];
@@ -55,29 +51,18 @@ export class ArticlesService {
     }
   }
 
-  async tagArticles(tagName: string): Promise<Articles[]> {
-    const tag: Tags = await this.tagsRepository
-      .createQueryBuilder('tag')
-      .where({ name: tagName })
-      .leftJoinAndSelect('tag.articles', 'article')
-      .getOne();
-    return tag.articles;
-  }
-
   async createArticle(createArticleDto: CreateArticleDto): Promise<Articles> {
     const { tags, ...otherParts } = createArticleDto;
-    // 문자열로 받은 태그 정보를 엔티티 정보로 변환
     const convertedTags: Tags[] = [];
     if (tags !== undefined) {
       // TODO: 최적화를 위해 없는 태그에 대해 개별적인 INSERT가 아닌 일괄 INSERT가 되도록 수정
       await Promise.all(
         tags.map(async (tag) => {
-          const tagObj = await this.tagsRepository.getOrCreate(tag);
+          const tagObj = await this.tagsService.getOrCreate(tag);
           convertedTags.push(tagObj);
         }),
       );
     }
-    // 새 게시글 생성
     const created = Object.assign(this.articlesRepository.create(), {
       ...otherParts,
       tags: Promise.resolve(convertedTags),
@@ -94,7 +79,7 @@ export class ArticlesService {
     if (tags !== undefined) {
       const convertedTags: Tags[] = [];
       for (const tag of tags) {
-        convertedTags.push(await this.tagsRepository.getOrCreate(tag));
+        convertedTags.push(await this.tagsService.getOrCreate(tag));
       }
       updated.tags = Promise.resolve(convertedTags);
     }
@@ -105,42 +90,4 @@ export class ArticlesService {
     const result = await this.articlesRepository.delete(id);
     return result.affected > 0;
   }
-  //--END: Article methods
-
-  //--START: Tag methods
-  async allTags(): Promise<Tags[]> {
-    return this.tagsRepository.find();
-  }
-
-  async findTagById(id: number): Promise<Tags> {
-    return this.tagsRepository.findOne(id);
-  }
-  //--END: Tag methods
-
-  //--START: Category methods
-  async allCategories(): Promise<Categories[]> {
-    return this.categoriesRepository.find();
-  }
-
-  async findCategoryById(id: number): Promise<Categories> {
-    return this.categoriesRepository.findOne(id);
-  }
-
-  async createCategory(name: string): Promise<Categories> {
-    const newCategory = this.categoriesRepository.create({ name });
-    return this.categoriesRepository.save(newCategory);
-  }
-
-  async updateCategory(id: number, name: string): Promise<Categories> {
-    const updated = new Categories();
-    updated.id = id;
-    updated.name = name;
-    return this.categoriesRepository.save(updated);
-  }
-
-  async deleteCategory(id: number): Promise<boolean> {
-    const result = await this.categoriesRepository.delete(id);
-    return result.affected > 0;
-  }
-  //--END: Category methods
 }

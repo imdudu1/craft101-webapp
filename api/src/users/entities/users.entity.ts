@@ -1,14 +1,9 @@
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import * as argon2 from 'argon2';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import * as argon2 from 'argon2';
 import { IsEnum } from 'class-validator';
+import { Comments } from 'src/articles/entities/comments.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
 export enum UserRole {
   USER = 'USER',
@@ -54,6 +49,10 @@ export class Users extends CommonEntity {
   @Column({ type: 'enum', enum: AccountType, default: AccountType.LOCAL })
   @IsEnum(AccountType)
   accountType: AccountType;
+
+  @Field(() => [Comments])
+  @OneToMany(() => Comments, (comment) => comment.author)
+  comments: Comments[];
 
   @BeforeInsert()
   @BeforeUpdate()
