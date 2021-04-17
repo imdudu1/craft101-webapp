@@ -1,16 +1,16 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthResolver } from './auth.resolver';
-import { UsersModule } from '../users/users.module';
-import { KakaoStrategy } from './strategies/kakao.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './auth.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { OAuthTokens } from './entities/oauth-tokens.entity';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthController } from '../auth/controllers/auth.controller';
+import { AuthResolver } from '../auth/resolvers/auth.resolver';
+import { AuthService } from '../auth/services/auth.service';
+import { UsersModule } from '../users/users.module';
 import { CertifyEmailCodes } from './entities/certify-email-code.entity';
+import { OAuthTokens } from './entities/oauth-tokens.entity';
+import { AuthGuard } from './guards/auth.guard';
+import { KakaoStrategy } from './strategies/kakao.strategy';
 
 @Module({
   imports: [
@@ -23,13 +23,13 @@ import { CertifyEmailCodes } from './entities/certify-email-code.entity';
     TypeOrmModule.forFeature([OAuthTokens, CertifyEmailCodes]),
   ],
   providers: [
-    AuthService,
-    AuthResolver,
-    KakaoStrategy,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    AuthService,
+    AuthResolver,
+    KakaoStrategy,
   ],
   controllers: [AuthController],
   exports: [AuthService],

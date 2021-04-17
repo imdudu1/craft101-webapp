@@ -1,11 +1,11 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
+import { AuthService } from '../auth/services/auth.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import LoginUserDto from './dtos/login-user.dto';
 import { Users } from './entities/users.entity';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
-import LoginUserDto from './dtos/login-user.dto';
-import { AuthService } from '../auth/auth.service';
-import { UnauthorizedException } from '@nestjs/common';
 
 @Resolver()
 export class UsersResolver {

@@ -1,7 +1,7 @@
 import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { FRONT_SERVER_URL } from '../constants';
+import { FRONT_SERVER_URL } from '../../constants';
+import { AuthService } from '../services/auth.service';
 
 @Controller('auth')
 export class AuthController {

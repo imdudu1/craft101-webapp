@@ -77,12 +77,14 @@ type Mutation {
   confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
   deleteCategory(id: Float!): Boolean!
+  deleteComments(commentId: Float!): Boolean!
   newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
   newArticle(category: Float!, discord: String!, explanation: String!, homepage: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   newCategory(name: String!): Categories!
   newComment(articleId: Float!, comment: CreateCommentDto!): Comments!
   requestCertifyEmail: Boolean!
   updateArticle(category: Float, discord: String, explanation: String, homepage: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
+  updateComment(comment: UpdateCommentDto!, commentId: Float!): Comments!
 }
 
 type PlayerHistories {
@@ -98,6 +100,7 @@ type Query {
   articles(limit: Float!, offset: Float!): [Articles!]!
   categories: [Categories!]!
   category(id: Float!): Categories!
+  comments(articleId: Float!): [Comments!]!
   login(password: String!, username: String!): String!
   me: Users!
   serverArticle(id: Float!): ServerArticleDetailOutputDto!
@@ -118,6 +121,10 @@ type Tags {
   id: Float!
   name: String!
   updatedAt: DateTime!
+}
+
+input UpdateCommentDto {
+  content: String!
 }
 
 enum UserRole {
