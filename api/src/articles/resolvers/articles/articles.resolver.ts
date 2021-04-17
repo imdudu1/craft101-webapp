@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { McStatusOutputDto } from '../../../live-mc/dtos/mc-status-output.dto';
-import { LiveMCService } from '../../../live-mc/live-mc.service';
+import { LiveMCService } from '../../../live-mc/services/live-mc.service';
 import {
   ArticleDetailOutputDto,
   ServerArticleDetailOutputDto,

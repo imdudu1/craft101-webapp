@@ -4,8 +4,8 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ArticlesModule } from 'src/articles/articles.module';
 import { REDIS_HOST } from 'src/constants';
 import { PlayerHistories } from './entities/player-histories.entity';
-import { LiveMCGateway } from './live-mc.gateway';
-import { LiveMCService } from './live-mc.service';
+import { LiveMCGateway } from './gateways/live-mc.gateway';
+import { LiveMCService } from './services/live-mc.service';
 
 @Module({
   imports: [

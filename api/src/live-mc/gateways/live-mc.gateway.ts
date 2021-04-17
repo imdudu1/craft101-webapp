@@ -7,7 +7,7 @@ import {
 import { Server } from 'ws';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LiveMCService } from './live-mc.service';
+import { LiveMCService } from '../services/live-mc.service';
 
 @WebSocketGateway(4001)
 export class LiveMCGateway {

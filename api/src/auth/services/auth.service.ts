@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
@@ -10,7 +10,7 @@ import {
   UserRoles,
   Users,
 } from '../../users/entities/users.entity';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/services/users.service';
 import { CertifyEmailCodes } from './../entities/certify-email-code.entity';
 import { OAuthTokens } from './../entities/oauth-tokens.entity';
 
@@ -21,9 +21,8 @@ export class AuthService {
     private readonly authTokensRepository: Repository<OAuthTokens>,
     @InjectRepository(CertifyEmailCodes)
     private readonly certifyEmailCodesRepository: Repository<CertifyEmailCodes>,
-    @Inject(forwardRef(() => UsersService))
-    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   async validateLocalUser(
@@ -94,7 +93,9 @@ export class AuthService {
     const code = crypto.randomInt(110101, 999999);
     if (!user.certifyEmail) {
       const certifyEmailCode = this.certifyEmailCodesRepository.create({
-        user,
+        user: {
+          id: userId,
+        },
         code,
       });
       await this.certifyEmailCodesRepository.save(certifyEmailCode);

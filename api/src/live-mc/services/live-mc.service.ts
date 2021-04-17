@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
@@ -7,9 +7,9 @@ import { Articles } from 'src/articles/entities/articles.entity';
 import { ArticlesService } from 'src/articles/services/articles/articles.service';
 import { MC_SERVER_DEFAULT_PORT } from 'src/constants';
 import { Repository } from 'typeorm';
-import { McStatusOutputDto } from './dtos/mc-status-output.dto';
-import { PlayerHistories } from './entities/player-histories.entity';
-import { MCStatus } from './types/mc-status.type';
+import { McStatusOutputDto } from '../dtos/mc-status-output.dto';
+import { PlayerHistories } from '../entities/player-histories.entity';
+import { MCStatus } from '../types/mc-status.type';
 
 @Injectable()
 export class LiveMCService {
@@ -17,7 +17,6 @@ export class LiveMCService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(PlayerHistories)
     private readonly playerHistoriesRepository: Repository<PlayerHistories>,
-    @Inject(forwardRef(() => ArticlesService))
     private readonly articlesService: ArticlesService,
   ) {}
 
