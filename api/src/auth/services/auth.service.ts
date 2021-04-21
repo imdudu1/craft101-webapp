@@ -1,14 +1,18 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { AccountType, UserRole, Users } from '../users/entities/users.entity';
-import { Profile } from 'passport';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OAuthTokens } from './entities/oauth-tokens.entity';
-import { Repository } from 'typeorm';
-import { CertifyEmailCodes } from './entities/certify-email-code.entity';
 import * as crypto from 'crypto';
+import { Profile } from 'passport';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  AccountType,
+  UserRoles,
+  Users,
+} from '../../users/entities/users.entity';
+import { UsersService } from '../../users/services/users.service';
+import { CertifyEmailCodes } from './../entities/certify-email-code.entity';
+import { OAuthTokens } from './../entities/oauth-tokens.entity';
 
 @Injectable()
 export class AuthService {
@@ -17,9 +21,8 @@ export class AuthService {
     private readonly authTokensRepository: Repository<OAuthTokens>,
     @InjectRepository(CertifyEmailCodes)
     private readonly certifyEmailCodesRepository: Repository<CertifyEmailCodes>,
-    @Inject(forwardRef(() => UsersService))
-    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   async validateLocalUser(
@@ -45,7 +48,7 @@ export class AuthService {
       newUser.username = tempUsername;
       newUser.nickname = displayName;
       newUser.password = uuidv4();
-      newUser.role = UserRole.USER;
+      newUser.role = UserRoles.USER;
       newUser.accountType = AccountType.KAKAO;
       newUser.email = 'thisuser@sns.account';
       user = await this.usersService.createUser(newUser);
@@ -74,12 +77,9 @@ export class AuthService {
     return this.jwtService.sign(`${id}`);
   }
 
-  async verifyJwt(jwt: string) {
+  async verifyJwt(jwt: string): Promise<Users> {
     const userId: number = +this.jwtService.verify(jwt);
-    const { password, ...result } = await this.usersService.findUserById(
-      userId,
-    );
-    return result;
+    return this.usersService.findUserById(userId);
   }
 
   async decodeJwt(jwt: string) {
@@ -93,7 +93,9 @@ export class AuthService {
     const code = crypto.randomInt(110101, 999999);
     if (!user.certifyEmail) {
       const certifyEmailCode = this.certifyEmailCodesRepository.create({
-        user,
+        user: {
+          id: userId,
+        },
         code,
       });
       await this.certifyEmailCodesRepository.save(certifyEmailCode);

@@ -1,11 +1,16 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { ArticleType } from 'src/articles/entities/articles.entity';
 
 @ArgsType()
 export class CreateArticleDto {
   @Field(() => String)
   @IsUrl()
   thumbnail: string;
+
+  @Field(() => String)
+  @IsString()
+  host: string;
 
   @Field(() => String)
   @IsString()
@@ -33,4 +38,8 @@ export class CreateArticleDto {
   @Field(() => Number)
   @IsNumber()
   category: number;
+
+  @Field(() => ArticleType)
+  @IsEnum(ArticleType)
+  articleType: ArticleType;
 }

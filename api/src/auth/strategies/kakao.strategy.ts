@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
-import { AuthService } from '../auth.service';
 import { API_SERVER_URL } from '../../constants';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {

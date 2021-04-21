@@ -1,15 +1,21 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import * as argon2 from 'argon2';
 import { IsEnum } from 'class-validator';
+import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/articles/entities/comments.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
-export enum UserRole {
+export enum UserRoles {
   USER = 'USER',
   ADMIN = 'ADMIN',
 }
-registerEnumType(UserRole, { name: 'UserRole' });
+registerEnumType(UserRoles, { name: 'UserRole' });
 
 export enum AccountType {
   LOCAL = 'LOCAL',
@@ -17,6 +23,7 @@ export enum AccountType {
 }
 registerEnumType(AccountType, { name: 'AccountType' });
 
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Users extends CommonEntity {
@@ -40,15 +47,19 @@ export class Users extends CommonEntity {
   @Column({ default: false })
   certifyEmail: boolean;
 
-  @Field(() => UserRole)
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  @IsEnum(UserRole)
-  role: UserRole;
+  @Field(() => UserRoles)
+  @Column({ type: 'enum', enum: UserRoles, default: UserRoles.USER })
+  @IsEnum(UserRoles)
+  role: UserRoles;
 
   @Field(() => AccountType)
   @Column({ type: 'enum', enum: AccountType, default: AccountType.LOCAL })
   @IsEnum(AccountType)
   accountType: AccountType;
+
+  @Field(() => [Articles])
+  @OneToMany(() => Articles, (article) => article.author)
+  articles: Articles[];
 
   @Field(() => [Comments])
   @OneToMany(() => Comments, (comment) => comment.author)
