@@ -3,6 +3,9 @@ import { CreateCommentDto } from 'src/articles/dtos/commentDtos/create-comment.d
 import { UpdateCommentDto } from 'src/articles/dtos/commentDtos/update-comment.dto';
 import { Comments } from 'src/articles/entities/comments.entity';
 import { CommentsService } from 'src/articles/services/comments/comments.service';
+import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
+import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
+import { Users } from 'src/users/entities/users.entity';
 
 @Resolver()
 export class CommentsResolver {
@@ -14,23 +17,39 @@ export class CommentsResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteComments(@Args('commentId') commentId: number) {
-    return this.commentsService.deleteComment(commentId);
+  @AllowUserRoles(['ANY'])
+  async deleteComments(
+    @Args('commentId') commentId: number,
+    @AuthUser() authUser: Users,
+  ) {
+    return this.commentsService.deleteComment(commentId, authUser);
   }
 
   @Mutation(() => Comments)
+  @AllowUserRoles(['ANY'])
   async updateComment(
     @Args('commentId') commentId: number,
+    @AuthUser() authUser: Users,
     @Args('comment') updateCommentDto: UpdateCommentDto,
   ) {
-    return this.commentsService.updateComment(commentId, updateCommentDto);
+    return this.commentsService.updateComment(
+      commentId,
+      authUser,
+      updateCommentDto,
+    );
   }
 
   @Mutation(() => Comments)
+  @AllowUserRoles(['ANY'])
   async newComment(
     @Args('articleId') articleId: number,
+    @AuthUser() authUser: Users,
     @Args('comment') createCommentDto: CreateCommentDto,
   ) {
-    return this.commentsService.createComment(articleId, createCommentDto);
+    return this.commentsService.createComment(
+      articleId,
+      authUser,
+      createCommentDto,
+    );
   }
 }

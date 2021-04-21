@@ -1,11 +1,14 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateArticleDto } from 'src/articles/dtos/articleDtos/create-article.dto';
+import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
+import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
+import { Users } from 'src/users/entities/users.entity';
 import { McStatusOutputDto } from '../../../live-mc/dtos/mc-status-output.dto';
 import { LiveMCService } from '../../../live-mc/services/live-mc.service';
 import {
   ArticleDetailOutputDto,
   ServerArticleDetailOutputDto,
 } from '../../dtos/articleDtos/article-detail.dto';
-import { CreateArticleDto } from '../../dtos/articleDtos/create-article.dto';
 import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
 import { Articles } from '../../entities/articles.entity';
 import { ArticlesService } from '../../services/articles/articles.service';
@@ -51,22 +54,30 @@ export class ArticlesResolver {
   }
 
   @Mutation(() => Articles)
+  @AllowUserRoles(['ANY'])
   async newArticle(
+    @AuthUser() authUser: Users,
     @Args() createArticleDto: CreateArticleDto,
   ): Promise<Articles> {
-    return this.articleService.createArticle(createArticleDto);
+    return this.articleService.createArticle(authUser, createArticleDto);
   }
 
   @Mutation(() => Articles)
+  @AllowUserRoles(['ANY'])
   async updateArticle(
     @Args('id') id: number,
+    @AuthUser() authUser: Users,
     @Args() updateArticleDto: UpdateArticleDto,
   ): Promise<Articles> {
-    return this.articleService.updateArticle(id, updateArticleDto);
+    return this.articleService.updateArticle(id, authUser, updateArticleDto);
   }
 
   @Mutation(() => Boolean)
-  async deleteArticle(@Args('id') id: number): Promise<boolean> {
-    return this.articleService.deleteArticle(id);
+  @AllowUserRoles(['ANY'])
+  async deleteArticle(
+    @Args('id') id: number,
+    @AuthUser() authUser: Users,
+  ): Promise<boolean> {
+    return this.articleService.deleteArticle(id, authUser);
   }
 }

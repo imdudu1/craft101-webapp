@@ -1,6 +1,12 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import * as argon2 from 'argon2';
 import { IsEnum } from 'class-validator';
+import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/articles/entities/comments.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
@@ -17,6 +23,7 @@ export enum AccountType {
 }
 registerEnumType(AccountType, { name: 'AccountType' });
 
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Users extends CommonEntity {
@@ -49,6 +56,10 @@ export class Users extends CommonEntity {
   @Column({ type: 'enum', enum: AccountType, default: AccountType.LOCAL })
   @IsEnum(AccountType)
   accountType: AccountType;
+
+  @Field(() => [Articles])
+  @OneToMany(() => Articles, (article) => article.author)
+  articles: Articles[];
 
   @Field(() => [Comments])
   @OneToMany(() => Comments, (comment) => comment.author)

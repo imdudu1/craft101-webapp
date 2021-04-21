@@ -20,6 +20,7 @@ enum ArticleType {
 
 type Articles {
   articleType: ArticleType!
+  author: Users!
   category: Categories!
   comments: [Comments!]!
   createdAt: DateTime!
@@ -28,7 +29,7 @@ type Articles {
   homepage: String!
   host: String!
   id: Float!
-  likeCount: Float!
+  likeCount: Float
   name: String!
   playerHistories: [PlayerHistories!]!
   tags: [Tags!]
@@ -79,11 +80,11 @@ type Mutation {
   deleteCategory(id: Float!): Boolean!
   deleteComments(commentId: Float!): Boolean!
   newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
-  newArticle(category: Float!, discord: String!, explanation: String!, homepage: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
+  newArticle(articleType: ArticleType!, category: Float!, discord: String!, explanation: String!, homepage: String!, host: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   newCategory(name: String!): Categories!
   newComment(articleId: Float!, comment: CreateCommentDto!): Comments!
   requestCertifyEmail: Boolean!
-  updateArticle(category: Float, discord: String, explanation: String, homepage: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
+  updateArticle(articleType: ArticleType, category: Float, discord: String, explanation: String, homepage: String, host: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
   updateComment(comment: UpdateCommentDto!, commentId: Float!): Comments!
 }
 
@@ -134,6 +135,7 @@ enum UserRole {
 
 type Users {
   accountType: AccountType!
+  articles: [Articles!]!
   certifyEmail: Boolean!
   comments: [Comments!]!
   createdAt: DateTime!

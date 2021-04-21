@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql';
 import { IsEnum } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
+import { Users } from 'src/users/entities/users.entity';
 import {
   Column,
   Entity,
@@ -29,6 +30,10 @@ registerEnumType(ArticleType, { name: 'ArticleType' });
 @ObjectType()
 @Entity()
 export class Articles extends CommonEntity {
+  @Field(() => Users)
+  @ManyToOne(() => Users, (user) => user.articles)
+  author: Users;
+
   @Field(() => String)
   @Column()
   thumbnail: string;
@@ -61,9 +66,9 @@ export class Articles extends CommonEntity {
   @OneToMany(() => Comments, (comment) => comment.article)
   comments: Comments[];
 
-  @Field(() => Number)
-  @Column()
-  likeCount: number;
+  @Field(() => Number, { nullable: true })
+  @Column({ default: 0 })
+  likeCount?: number;
 
   @Field(() => [Tags], { nullable: true })
   @ManyToMany(() => Tags, (tag) => tag.articles, {
