@@ -1,5 +1,6 @@
+import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,36 +22,56 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env.dev',
+      validationSchema: Joi.object({
+        PORT: Joi.number(),
+        POSTGRES_HOST: Joi.string().required(),
+        POSTGRES_PORT: Joi.number().required(),
+        POSTGRES_USER: Joi.string().required(),
+        POSTGRES_PASSWORD: Joi.string().required(),
+        POSTGRES_DB: Joi.string().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
+        KAKAO_API_KEY: Joi.string().required(),
+        KAKAO_SECRET: Joi.string().required(),
+        JWT_SECRET_KEY: Joi.string().required(),
+        GRAPHQL_PLAYGROUND: Joi.boolean(),
+      }),
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [
-        Articles,
-        Tags,
-        Categories,
-        Users,
-        OAuthTokens,
-        CertifyEmailCodes,
-        PlayerHistories,
-        Comments,
-      ],
-      synchronize: true,
-      logging: 'all',
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('POSTGRES_HOST'),
+        port: configService.get('POSTGRES_PORT'),
+        username: configService.get('POSTGRES_USER'),
+        password: configService.get('POSTGRES_PASSWORD'),
+        database: configService.get('POSTGRES_DB'),
+        entities: [
+          Articles,
+          Tags,
+          Categories,
+          Users,
+          OAuthTokens,
+          CertifyEmailCodes,
+          PlayerHistories,
+          Comments,
+        ],
+        synchronize: true,
+        logging: 'all',
+      }),
     }),
-    GraphQLModule.forRoot({
-      playground: process.env.NODE_ENV !== 'production',
-      autoSchemaFile: join('src/schema.gql'),
-      sortSchema: true,
-      installSubscriptionHandlers: true,
-      context: ({ req }) => ({
-        token: req.headers['x-jwt'] || undefined,
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        playground: configService.get('GRAPHQL_PLAYGROUND'),
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        installSubscriptionHandlers: true,
+        context: ({ req }) => ({
+          token: req.headers['x-jwt'] || undefined,
+        }),
       }),
     }),
     ScheduleModule.forRoot(),
