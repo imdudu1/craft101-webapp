@@ -1,15 +1,23 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Inject } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { CreateCommentDto } from 'src/articles/dtos/commentDtos/create-comment.dto';
 import { UpdateCommentDto } from 'src/articles/dtos/commentDtos/update-comment.dto';
 import { Comments } from 'src/articles/entities/comments.entity';
 import { CommentsService } from 'src/articles/services/comments/comments.service';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
+import { PUB_SUB } from 'src/pubsub/pubSub.module';
 import { Users } from 'src/users/entities/users.entity';
+
+const COMMENT_ADDED_EVENT = 'commentAdded';
 
 @Resolver()
 export class CommentsResolver {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
+  ) {}
 
   @Query(() => [Comments])
   async comments(@Args('articleId') articleId: number) {
@@ -46,10 +54,20 @@ export class CommentsResolver {
     @AuthUser() authUser: Users,
     @Args('comment') createCommentDto: CreateCommentDto,
   ) {
-    return this.commentsService.createComment(
+    const newComment = await this.commentsService.createComment(
       articleId,
       authUser,
       createCommentDto,
     );
+    this.pubSub.publish(COMMENT_ADDED_EVENT, { commentAdded: newComment });
+    return newComment;
+  }
+
+  @Subscription(() => Comments, {
+    filter: (payload, variables) =>
+      payload.commentAdded.article.id === variables.articleId,
+  })
+  commentAdded(@Args('articleId') articleId: number) {
+    return this.pubSub.asyncIterator(COMMENT_ADDED_EVENT);
   }
 }

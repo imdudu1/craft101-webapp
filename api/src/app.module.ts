@@ -16,6 +16,7 @@ import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
 import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
 import { PlayerHistories } from './live-mc/entities/player-histories.entity';
 import { LiveMCModule } from './live-mc/live-mc.module';
+import { PubSubModule } from './pubsub/pubSub.module';
 import { Users } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
 
@@ -47,6 +48,8 @@ import { UsersModule } from './users/users.module';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
+        synchronize: true,
+        logging: 'all',
         entities: [
           Articles,
           Tags,
@@ -57,8 +60,6 @@ import { UsersModule } from './users/users.module';
           PlayerHistories,
           Comments,
         ],
-        synchronize: true,
-        logging: 'all',
       }),
     }),
     GraphQLModule.forRootAsync({
@@ -68,10 +69,13 @@ import { UsersModule } from './users/users.module';
         playground: configService.get('GRAPHQL_PLAYGROUND'),
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         sortSchema: true,
+        context: ({ req, connection }) => {
+          const KEY_NAME = 'x-jwt';
+          return {
+            token: req ? req.headers[KEY_NAME] : connection.context[KEY_NAME],
+          };
+        },
         installSubscriptionHandlers: true,
-        context: ({ req }) => ({
-          token: req.headers['x-jwt'] || undefined,
-        }),
       }),
     }),
     ScheduleModule.forRoot(),
@@ -79,6 +83,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthModule,
     LiveMCModule,
+    PubSubModule,
   ],
   controllers: [AppController],
   providers: [],
