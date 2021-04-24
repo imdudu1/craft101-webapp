@@ -10,6 +10,7 @@ import { ArticlesModule } from './articles/articles.module';
 import { Articles } from './articles/entities/articles.entity';
 import { Categories } from './articles/entities/categories.entity';
 import { Comments } from './articles/entities/comments.entity';
+import { Recommendations } from './articles/entities/recommendations.entity';
 import { Tags } from './articles/entities/tags.entity';
 import { AuthModule } from './auth/auth.module';
 import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
@@ -59,6 +60,7 @@ import { UsersModule } from './users/users.module';
           CertifyEmailCodes,
           PlayerHistories,
           Comments,
+          Recommendations,
         ],
       }),
     }),

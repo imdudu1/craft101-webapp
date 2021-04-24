@@ -6,14 +6,17 @@ import { LiveMCModule } from '../live-mc/live-mc.module';
 import { Articles } from './entities/articles.entity';
 import { Categories } from './entities/categories.entity';
 import { Comments } from './entities/comments.entity';
+import { Recommendations } from './entities/recommendations.entity';
 import { TagsRepository } from './repositories/tag.repository';
 import { ArticlesResolver } from './resolvers/articles/articles.resolver';
 import { CategoriesResolver } from './resolvers/categories/categories.resolver';
 import { CommentsResolver } from './resolvers/comments/comments.resolver';
+import { RecommendationsResolver } from './resolvers/recommendations/recommendations.resolver';
 import { TagsResolver } from './resolvers/tags/tags.resolver';
 import { ArticlesService } from './services/articles/articles.service';
 import { CategoriesService } from './services/categories/categories.service';
 import { CommentsService } from './services/comments/comments.service';
+import { RecommendationsService } from './services/recommendations/recommendations.service';
 import { TagsService } from './services/tags/tags.service';
 
 @Module({
@@ -25,6 +28,7 @@ import { TagsService } from './services/tags/tags.service';
       Categories,
       TagsRepository,
       PlayerHistories,
+      Recommendations,
     ]),
     CacheModule.register({
       store: redisStore,
@@ -41,6 +45,8 @@ import { TagsService } from './services/tags/tags.service';
     CommentsService,
     CategoriesResolver,
     CategoriesService,
+    RecommendationsResolver,
+    RecommendationsService,
   ],
   exports: [ArticlesService, TagsService, CommentsService, CategoriesService],
 })
