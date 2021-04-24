@@ -18,7 +18,7 @@ export class RecommendationsService {
   ): Promise<CreateRecommendationOutputDto> {
     const [
       _,
-      numOfRecommends,
+      numberOfRecommends,
     ] = await this.recommendationsRepository.findAndCount({
       where: {
         article: {
@@ -27,7 +27,7 @@ export class RecommendationsService {
         user,
       },
     });
-    if (numOfRecommends > 0) {
+    if (numberOfRecommends > 0) {
       return {
         ok: false,
         error: 'Already recommended',
