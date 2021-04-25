@@ -12,7 +12,7 @@ export class RecommendationsService {
     private readonly recommendationsRepository: Repository<Recommendations>,
   ) {}
 
-  async addRecommendation(
+  async increaseArticleRecommendation(
     articleId: number,
     user: Users,
   ): Promise<CreateRecommendationOutputDto> {
@@ -33,7 +33,7 @@ export class RecommendationsService {
         error: 'Already recommended',
       };
     }
-    this.recommendationsRepository.save(
+    await this.recommendationsRepository.save(
       this.recommendationsRepository.create({
         article: {
           id: articleId,
@@ -41,8 +41,14 @@ export class RecommendationsService {
         user,
       }),
     );
+    const count = await this.recommendationsRepository.count({
+      article: {
+        id: articleId,
+      },
+    });
     return {
       ok: true,
+      count,
     };
   }
 }
