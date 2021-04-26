@@ -8,6 +8,7 @@ import * as argon2 from 'argon2';
 import { IsEnum } from 'class-validator';
 import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/articles/entities/comments.entity';
+import { Recommendations } from 'src/articles/entities/recommendations.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 
@@ -64,6 +65,10 @@ export class Users extends CommonEntity {
   @Field(() => [Comments])
   @OneToMany(() => Comments, (comment) => comment.author)
   comments: Comments[];
+
+  @Field(() => [Recommendations])
+  @OneToMany(() => Recommendations, (recommendation) => recommendation.user)
+  recommendations: Recommendations;
 
   @BeforeInsert()
   @BeforeUpdate()

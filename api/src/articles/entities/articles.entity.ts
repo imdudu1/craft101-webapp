@@ -18,6 +18,7 @@ import {
 import { PlayerHistories } from '../../live-mc/entities/player-histories.entity';
 import { Categories } from './categories.entity';
 import { Comments } from './comments.entity';
+import { Recommendations } from './recommendations.entity';
 import { Tags } from './tags.entity';
 
 export enum ArticleType {
@@ -66,9 +67,9 @@ export class Articles extends CommonEntity {
   @OneToMany(() => Comments, (comment) => comment.article)
   comments: Comments[];
 
-  @Field(() => Number, { nullable: true })
-  @Column({ default: 0 })
-  likeCount?: number;
+  @Field(() => [Recommendations])
+  @OneToMany(() => Recommendations, (recommendation) => recommendation.article)
+  recommendations: Recommendations[];
 
   @Field(() => [Tags], { nullable: true })
   @ManyToMany(() => Tags, (tag) => tag.articles, {
