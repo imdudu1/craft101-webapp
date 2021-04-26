@@ -6,20 +6,20 @@ services:
     image: bunkerity/bunkerized-nginx
     restart: always
     environment:
-      - MULTISITE=yes
       - SERVER_NAME=api.example.com www.example.com
-      - SERVE_FILES=no
-      - DISABLE_DEFAULT_SERVER=yes
-      - REDIRECT_HTTP_TO_HTTPS=yes
-      - AUTO_LETS_ENCRYPT=yes
-      - USE_PROXY_CACHE=yes
-      - USE_GZIP=yes
-      - USE_BROTLI=yes
-      - USE_REVERSE_PROXY=yes
       - api.example.com_REVERSE_PROXY_URL=/
       - api.example.com_REVERSE_PROXY_HOST=http://backend:4000
       - www.example.com_REVERSE_PROXY_URL=/
       - www.example.com_REVERSE_PROXY_HOST=http://frontend:8080
+      - USE_GZIP=yes
+      - MULTISITE=yes
+      - USE_BROTLI=yes
+      - SERVE_FILES=no
+      - USE_PROXY_CACHE=yes
+      - USE_REVERSE_PROXY=yes
+      - AUTO_LETS_ENCRYPT=yes
+      - DISABLE_DEFAULT_SERVER=yes
+      - REDIRECT_HTTP_TO_HTTPS=yes
     networks:
       - webnet
     depends_on:
@@ -28,6 +28,8 @@ services:
     ports:
       - 80:8080
       - 443:8443
+    volumes:
+      - ./letsencrypt:/etc/letsencrypt
 
   redis:
     container_name: redis
@@ -49,7 +51,7 @@ services:
     networks:
       - webnet
     volumes:
-      - db-volume:/var/lib/postgresql/data
+      - ./dbdata:/var/lib/postgresql/data
 
   backend:
     container_name: backend
@@ -59,15 +61,17 @@ services:
       - webnet
     restart: always
     environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER={{USER}}
-      - DB_PASSWORD={{PASSWORD}}
-      - DB_NAME={{DB}}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER={{USER}}
+      - POSTGRES_PASSWORD={{PASSWORD}}
+      - POSTGRES_DB={{DB}}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - JWT_SECRET_KEY={{SECRET_KEY}}
       - KAKAO_API_KEY={{KAKAO_API_KEY}}
+      - KAKAO_SECRET={{KAKAO_SECRET}}
+      - JWT_SECRET_KEY={{SECRET_KEY}}
+      - GRAPHQL_PLAYGROUND=false
     depends_on:
       - db
 
@@ -81,6 +85,3 @@ services:
 
 networks:
   webnet:
-
-volumes:
-  db-volume:
