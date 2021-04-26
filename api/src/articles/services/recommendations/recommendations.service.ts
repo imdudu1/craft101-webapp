@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateRecommendationOutputDto } from 'src/articles/dtos/recommendationDtos/create-recommendation.dto';
-import { Recommendations } from 'src/articles/entities/recommendations.entity';
+import {
+  AddRecommendationInputDto,
+  CreateRecommendationOutputDto,
+} from 'src/articles/dtos/recommendationDtos/create-recommendation.dto';
+import {
+  Recommendations,
+  RecommendationType,
+} from 'src/articles/entities/recommendations.entity';
 import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 
@@ -12,39 +18,53 @@ export class RecommendationsService {
     private readonly recommendationsRepository: Repository<Recommendations>,
   ) {}
 
-  async increaseArticleRecommendation(
-    articleId: number,
+  private genCondition(id: number, type: RecommendationType) {
+    const typeName =
+      RecommendationType.ARTICLE === type ? 'article' : 'comment';
+    const result = {};
+    result[typeName] = { id };
+    return result;
+  }
+
+  private async isExistRecommendation(
+    targetId: number,
     user: Users,
-  ): Promise<CreateRecommendationOutputDto> {
+    recommendationType: RecommendationType,
+  ): Promise<boolean> {
     const [
       _,
       numberOfRecommends,
     ] = await this.recommendationsRepository.findAndCount({
       where: {
-        article: {
-          id: articleId,
-        },
+        ...this.genCondition(targetId, recommendationType),
         user,
+        recommendationType,
       },
     });
-    if (numberOfRecommends > 0) {
+    return numberOfRecommends > 0;
+  }
+
+  async addRecommendation(
+    { id, type }: AddRecommendationInputDto,
+    user: Users,
+  ): Promise<CreateRecommendationOutputDto> {
+    const exist = await this.isExistRecommendation(id, user, type);
+    if (exist) {
       return {
         ok: false,
         error: 'Already recommended',
       };
     }
-    await this.recommendationsRepository.save(
-      this.recommendationsRepository.create({
-        article: {
-          id: articleId,
-        },
-        user,
-      }),
-    );
+
+    const condition = this.genCondition(id, type);
+    const newData = this.recommendationsRepository.create({
+      user,
+      ...condition,
+      recommendationType: type,
+    });
+    await this.recommendationsRepository.save(newData);
     const count = await this.recommendationsRepository.count({
-      article: {
-        id: articleId,
-      },
+      ...condition,
     });
     return {
       ok: true,

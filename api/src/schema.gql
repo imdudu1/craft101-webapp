@@ -29,9 +29,9 @@ type Articles {
   homepage: String!
   host: String!
   id: Float!
-  likeCount: Float
   name: String!
   playerHistories: [PlayerHistories!]!
+  recommendations: [Recommendations!]!
   tags: [Tags!]
   thumbnail: String!
   updatedAt: DateTime!
@@ -51,11 +51,18 @@ type Comments {
   content: String!
   createdAt: DateTime!
   id: Float!
+  recommendations: [Recommendations!]!
   updatedAt: DateTime!
 }
 
 input CreateCommentDto {
   content: String!
+}
+
+type CreateRecommendationOutputDto {
+  count: Float
+  error: String
+  ok: Boolean!
 }
 
 """
@@ -75,6 +82,7 @@ type MCStatus {
 }
 
 type Mutation {
+  addRecommendation(id: Float!, type: RecommendationType!): CreateRecommendationOutputDto!
   confirmCertifyEmailCode: Boolean!
   deleteArticle(id: Float!): Boolean!
   deleteCategory(id: Float!): Boolean!
@@ -109,11 +117,37 @@ type Query {
   tags: [Tags!]!
 }
 
+enum RecommendationType {
+  ARTICLE
+  COMMENT
+}
+
+type Recommendations {
+  article: Articles
+  comment: Comments
+  createdAt: DateTime!
+  id: Float!
+  recommendationType: RecommendationType!
+  updatedAt: DateTime!
+  user: Users!
+}
+
 type ServerArticleDetailOutputDto {
   article: Articles
   error: String
   ok: Boolean!
   status: MCStatus
+}
+
+type SubscribeRecommendationDto {
+  count: Float!
+  id: Float!
+  recommendationType: RecommendationType!
+}
+
+type Subscription {
+  commentAdded(articleId: Float!): Comments!
+  recommendationAdded(id: Float!, type: String!): SubscribeRecommendationDto!
 }
 
 type Tags {
@@ -143,6 +177,7 @@ type Users {
   id: Float!
   nickname: String!
   password: String!
+  recommendations: [Recommendations!]!
   role: UserRole!
   updatedAt: DateTime!
   username: String!

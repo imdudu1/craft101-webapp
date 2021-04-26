@@ -4,7 +4,7 @@ import * as os from 'os';
 
 @Injectable()
 export class AppClusterService {
-  static clusterize(bootstrap: () => Promise<void>, debug: boolean) {
+  static clusterize(bootstrap: () => Promise<void>, debug: boolean): void {
     const numCores = debug ? 1 : os.cpus().length;
     if (cluster.isMaster) {
       for (let i = 0; i < numCores; i++) {
