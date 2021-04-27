@@ -62,13 +62,12 @@ export class LiveMCService {
     const adArticles = await this.articlesService.allAdArticles();
     adArticles.forEach(async (adArticle) => {
       const { host } = adArticle;
-      const {
-        ok,
-        status: { onlinePlayers },
-      } = await this.getMCServerStatus(host);
+      const { ok, status } = await this.getMCServerStatus(host);
+      let currentOnlinePlayers = 0;
       if (ok) {
-        this.createPlayerHistory(adArticle, onlinePlayers);
+        currentOnlinePlayers = status.onlinePlayers;
       }
+      this.createPlayerHistory(adArticle, currentOnlinePlayers);
     });
   }
 }
