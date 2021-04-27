@@ -10,7 +10,7 @@ import { RecommendationType } from 'src/articles/entities/recommendations.entity
 import { RecommendationsService } from 'src/articles/services/recommendations/recommendations.service';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
-import { PUB_SUB } from 'src/pubsub/pubSub.module';
+import { PUB_SUB } from 'src/pubsub/pubsub.module';
 import { Users } from 'src/users/entities/users.entity';
 
 const RECOMMENDATION_ADDED_EVENT = 'recommendationAdded';

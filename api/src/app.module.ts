@@ -17,7 +17,7 @@ import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
 import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
 import { PlayerHistories } from './live-mc/entities/player-histories.entity';
 import { LiveMCModule } from './live-mc/live-mc.module';
-import { PubSubModule } from './pubsub/pubSub.module';
+import { PubSubModule } from './pubsub/pubsub.module';
 import { Users } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
 

@@ -20,7 +20,7 @@ export const authTokenVar = makeVar(token);
 const wsLInk = new WebSocketLink({
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'wss://api.gomi.land/graphql'
+      ? 'wss://api101.juraffe.dev/graphql'
       : 'ws://localhost:4000/graphql',
   options: {
     reconnect: true,
@@ -33,7 +33,7 @@ const wsLInk = new WebSocketLink({
 const httpLink = new HttpLink({
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'https://api.gomi.land/graphql'
+      ? 'https://api101.juraffe.dev/graphql'
       : 'http://localhost:4000/graphql',
 });
 
