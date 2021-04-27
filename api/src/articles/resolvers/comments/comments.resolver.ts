@@ -7,7 +7,7 @@ import { Comments } from 'src/articles/entities/comments.entity';
 import { CommentsService } from 'src/articles/services/comments/comments.service';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
-import { PUB_SUB } from 'src/pubsub/pubSub.module';
+import { PUB_SUB } from 'src/pubsub/pubsub.module';
 import { Users } from 'src/users/entities/users.entity';
 
 const COMMENT_ADDED_EVENT = 'commentAdded';

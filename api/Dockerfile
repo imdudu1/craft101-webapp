@@ -7,8 +7,8 @@ WORKDIR /home/node
 
 COPY . /home/node
 
-RUN npm install \
-    && npm run build
+RUN yarn install \
+    && yarn build
 
 # ---
 
@@ -22,6 +22,6 @@ WORKDIR /home/node
 COPY --from=builder /home/node/package*.json /home/node/
 COPY --from=builder /home/node/dist/ /home/node/dist/
 
-RUN npm install --only=prod
+RUN yarn install --production
 
 CMD ["node", "dist/main.js"]
