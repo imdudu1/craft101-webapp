@@ -14,6 +14,7 @@ import { Tags } from './articles/entities/tags.entity';
 import { AuthModule } from './auth/auth.module';
 import { CertifyEmailCodes } from './auth/entities/certify-email-code.entity';
 import { OAuthTokens } from './auth/entities/oauth-tokens.entity';
+import { JWT_KEY_NAME } from './constants';
 import { Files } from './files/entities/files.entity';
 import { FilesModule } from './files/files.module';
 import { PlayerHistories } from './live-mc/entities/player-histories.entity';
@@ -38,6 +39,9 @@ import { UsersModule } from './users/users.module';
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
         JWT_SECRET_KEY: Joi.string().required(),
+        AWS_REGION: Joi.string().required(),
+        AWS_ACCESS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
         AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
       }),
     }),
@@ -49,9 +53,10 @@ import { UsersModule } from './users/users.module';
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         sortSchema: true,
         context: ({ req, connection }) => {
-          const KEY_NAME = 'x-jwt';
           return {
-            token: req ? req.headers[KEY_NAME] : connection.context[KEY_NAME],
+            token: req
+              ? req.headers[JWT_KEY_NAME]
+              : connection.context[JWT_KEY_NAME],
           };
         },
         installSubscriptionHandlers: true,

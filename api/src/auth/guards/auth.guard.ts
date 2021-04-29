@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { JWT_KEY_NAME } from 'src/constants';
 import { AllowedRoles, AnyRole } from '../decorators/allow-user-role.decorator';
 import { AuthService } from '../services/auth.service';
 
@@ -25,8 +26,9 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    const httpRequest = context.switchToHttp().getRequest();
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    const token: string = gqlContext.token;
+    const token: string = gqlContext.token || httpRequest.headers[JWT_KEY_NAME];
     if (token) {
       const user = await this.authService.verifyJwt(token);
       if (user) {
