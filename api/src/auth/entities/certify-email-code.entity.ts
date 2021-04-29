@@ -12,7 +12,7 @@ export class CertifyEmailCodes {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Users)
+  @OneToOne(() => Users, { eager: true })
   @JoinColumn()
   user: Users;
 

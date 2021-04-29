@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { S3 } from 'aws-sdk';
+import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Files } from '../entities/files.entity';
@@ -14,7 +15,7 @@ export class FilesService {
     private readonly configService: ConfigService,
   ) {}
 
-  async uploadFile(filename: string, fileBuffer: Buffer) {
+  async uploadFile(uploader: Users, filename: string, fileBuffer: Buffer) {
     const s3 = new S3();
     const uploadResult = await s3
       .upload({
@@ -24,6 +25,7 @@ export class FilesService {
       })
       .promise();
     const newFile = this.filesRepository.create({
+      user: uploader,
       key: uploadResult.Key,
       url: uploadResult.Location,
     });

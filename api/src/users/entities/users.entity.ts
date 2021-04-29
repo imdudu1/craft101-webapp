@@ -10,7 +10,16 @@ import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/articles/entities/comments.entity';
 import { Recommendations } from 'src/articles/entities/recommendations.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { Files } from 'src/files/entities/files.entity';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 
 export enum UserRoles {
   USER = 'USER',
@@ -28,6 +37,10 @@ registerEnumType(AccountType, { name: 'AccountType' });
 @ObjectType()
 @Entity()
 export class Users extends CommonEntity {
+  @JoinColumn()
+  @OneToOne(() => Files, { nullable: true, eager: true })
+  avatar?: Files;
+
   @Field(() => String)
   @Column()
   username: string;
@@ -68,7 +81,11 @@ export class Users extends CommonEntity {
 
   @Field(() => [Recommendations])
   @OneToMany(() => Recommendations, (recommendation) => recommendation.user)
-  recommendations: Recommendations;
+  recommendations: Recommendations[];
+
+  @Field(() => [Files])
+  @OneToMany(() => Files, (file) => file.user)
+  files: Files[];
 
   @BeforeInsert()
   @BeforeUpdate()

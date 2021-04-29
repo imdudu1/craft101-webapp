@@ -10,5 +10,6 @@ import { FilesService } from './services/files.service';
   imports: [TypeOrmModule.forFeature([Files]), ConfigModule],
   providers: [FilesResolver, FilesService],
   controllers: [FilesController],
+  exports: [FilesService],
 })
 export class FilesModule {}
