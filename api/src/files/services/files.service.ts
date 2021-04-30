@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { S3 } from 'aws-sdk';
+import { ReadStream } from 'node:fs';
 import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -15,13 +16,17 @@ export class FilesService {
     private readonly configService: ConfigService,
   ) {}
 
-  async uploadFile(uploader: Users, filename: string, fileBuffer: Buffer) {
+  async uploadFile(
+    uploader: Users,
+    filename: string,
+    fileReadStream: ReadStream,
+  ) {
     const s3 = new S3();
     const uploadResult = await s3
       .upload({
         Bucket: this.configService.get('AWS_PUBLIC_BUCKET_NAME'),
-        Body: fileBuffer,
         Key: `${uuid()}-${filename}`,
+        Body: fileReadStream,
       })
       .promise();
     const newFile = this.filesRepository.create({

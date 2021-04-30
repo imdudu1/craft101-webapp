@@ -47,6 +47,7 @@
     "graphql": "^15.5.0",
     "graphql-redis-subscriptions": "^2.3.1",
     "graphql-tools": "^7.0.4",
+    "graphql-upload": "^11.0.0",
     "jsonwebtoken": "^8.5.1",
     "minecraft-server-util": "^3.4.4",
     "passport": "^0.4.1",
