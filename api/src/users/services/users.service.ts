@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Files } from 'src/files/entities/files.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
@@ -62,5 +63,11 @@ export class UsersService {
   async deleteUser(userId: number): Promise<boolean> {
     const result = await this.usersRepository.delete(userId);
     return result.affected > 0;
+  }
+
+  async updateUserAvatar(user: Users, avatar: Files) {
+    return this.usersRepository.update(user.id, {
+      avatar,
+    });
   }
 }
