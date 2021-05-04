@@ -22,18 +22,18 @@ export class LiveMCService {
 
   async getMCServerStatus(host: string): Promise<McStatusOutputDto> {
     const [serverIP, serverPort] = host.split(':');
-    let value = await this.cacheManager.get<MCStatus>(host);
-    if (!value) {
+    let status = await this.cacheManager.get<MCStatus>(host);
+    if (!status) {
       try {
-        const status = await msc.status(serverIP, {
+        const currentStatus = await msc.status(serverIP, {
           port: +serverPort || MC_SERVER_DEFAULT_PORT,
         });
-        value = Object.assign(new MCStatus(), {
-          ...status,
+        status = Object.assign(new MCStatus(), {
+          ...currentStatus,
           // Converted Description Object to string
-          description: status.description.toString(),
+          description: currentStatus.description.toString(),
         });
-        await this.cacheManager.set<MCStatus>(host, value, {
+        await this.cacheManager.set<MCStatus>(host, status, {
           ttl: 180 /* 3 minutes */,
         });
       } catch (error) {
@@ -45,7 +45,7 @@ export class LiveMCService {
     }
     return {
       ok: true,
-      status: value,
+      status,
     };
   }
 
@@ -60,14 +60,16 @@ export class LiveMCService {
   @Cron(CronExpression.EVERY_30_MINUTES)
   async checkMCServerStatus() {
     const adArticles = await this.articlesService.allAdArticles();
-    adArticles.forEach(async (adArticle) => {
-      const { host } = adArticle;
-      const { ok, status } = await this.getMCServerStatus(host);
-      let currentOnlinePlayers = 0;
-      if (ok) {
-        currentOnlinePlayers = status.onlinePlayers;
-      }
-      this.createPlayerHistory(adArticle, currentOnlinePlayers);
-    });
+    await Promise.all(
+      adArticles.map(async (adArticle) => {
+        const { host } = adArticle;
+        const { ok, status } = await this.getMCServerStatus(host);
+        let currentOnlinePlayers = 0;
+        if (ok) {
+          currentOnlinePlayers = status.onlinePlayers;
+        }
+        await this.createPlayerHistory(adArticle, currentOnlinePlayers);
+      }),
+    );
   }
 }

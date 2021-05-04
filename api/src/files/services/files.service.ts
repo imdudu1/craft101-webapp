@@ -20,7 +20,7 @@ export class FilesService {
     uploader: Users,
     filename: string,
     fileReadStream: ReadStream,
-  ) {
+  ): Promise<Files> {
     const s3 = new S3();
     const uploadResult = await s3
       .upload({

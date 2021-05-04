@@ -18,7 +18,7 @@ export class RecommendationsService {
     private readonly recommendationsRepository: Repository<Recommendations>,
   ) {}
 
-  private genCondition(id: number, type: RecommendationType) {
+  private generateRecommendTypeCondition(id: number, type: RecommendationType) {
     const typeName =
       RecommendationType.ARTICLE === type ? 'article' : 'comment';
     const result = {};
@@ -36,7 +36,7 @@ export class RecommendationsService {
       numberOfRecommends,
     ] = await this.recommendationsRepository.findAndCount({
       where: {
-        ...this.genCondition(targetId, recommendationType),
+        ...this.generateRecommendTypeCondition(targetId, recommendationType),
         user,
         recommendationType,
       },
@@ -56,13 +56,14 @@ export class RecommendationsService {
       };
     }
 
-    const condition = this.genCondition(id, type);
-    const newData = this.recommendationsRepository.create({
-      user,
-      ...condition,
-      recommendationType: type,
-    });
-    await this.recommendationsRepository.save(newData);
+    const condition = this.generateRecommendTypeCondition(id, type);
+    await this.recommendationsRepository.save(
+      this.recommendationsRepository.create({
+        user,
+        ...condition,
+        recommendationType: type,
+      }),
+    );
     const count = await this.recommendationsRepository.count({
       ...condition,
     });
