@@ -53,6 +53,12 @@ export class ArticlesResolver {
     return this.articleService.paginateArticles(offset, limit);
   }
 
+  @Query(() => [Articles])
+  @AllowUserRoles(['ANY'])
+  async myArticles(@AuthUser() authUser: Users) {
+    return this.articleService.userArticle(authUser);
+  }
+
   @Mutation(() => Articles)
   @AllowUserRoles(['ANY'])
   async newArticle(

@@ -70,6 +70,21 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Files {
+  createdAt: DateTime!
+  id: Float!
+  key: String!
+  updatedAt: DateTime!
+  url: String!
+  user: Users!
+}
+
+type LoginOutput {
+  error: String
+  ok: Boolean!
+  token: String
+}
+
 type MCStatus {
   description: String!
   favicon: String!
@@ -84,10 +99,13 @@ type MCStatus {
 type Mutation {
   addRecommendation(id: Float!, type: RecommendationType!): CreateRecommendationOutputDto!
   confirmCertifyEmailCode: Boolean!
+  createUser(email: String!, nickname: String!, password: String!, username: String!): Users!
   deleteArticle(id: Float!): Boolean!
   deleteCategory(id: Float!): Boolean!
   deleteComments(commentId: Float!): Boolean!
-  newAccount(email: String!, nickname: String!, password: String!, username: String!): Users!
+  deleteUser(id: Float!): Boolean!
+  editUserAvatar(avatar: Upload!): Boolean!
+  fileUpload(file: Upload!): Files!
   newArticle(articleType: ArticleType!, category: Float!, discord: String!, explanation: String!, homepage: String!, host: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   newCategory(name: String!): Categories!
   newComment(articleId: Float!, comment: CreateCommentDto!): Comments!
@@ -110,8 +128,9 @@ type Query {
   categories: [Categories!]!
   category(id: Float!): Categories!
   comments(articleId: Float!): [Comments!]!
-  login(password: String!, username: String!): String!
+  login(password: String!, username: String!): LoginOutput!
   me: Users!
+  myArticles: [Articles!]!
   serverArticle(id: Float!): ServerArticleDetailOutputDto!
   tagArticles(tag: String!): [Articles!]!
   tags: [Tags!]!
@@ -162,6 +181,9 @@ input UpdateCommentDto {
   content: String!
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 enum UserRole {
   ADMIN
   USER
@@ -174,6 +196,7 @@ type Users {
   comments: [Comments!]!
   createdAt: DateTime!
   email: String!
+  files: [Files!]!
   id: Float!
   nickname: String!
   password: String!

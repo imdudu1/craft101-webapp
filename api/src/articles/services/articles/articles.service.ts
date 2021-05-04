@@ -28,6 +28,12 @@ export class ArticlesService {
       .getMany();
   }
 
+  async userArticle(user: Users): Promise<Articles[]> {
+    return this.articlesRepository.find({
+      author: user,
+    });
+  }
+
   async allArticles(): Promise<Articles[]> {
     return this.articlesRepository.find();
   }
