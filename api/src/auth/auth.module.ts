@@ -11,14 +11,18 @@ import { CertifyEmailCodes } from './entities/certify-email-code.entity';
 import { OAuthTokens } from './entities/oauth-tokens.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { KakaoStrategy } from './strategies/kakao.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     PassportModule,
-    JwtModule.register({
-      // TODO: Keeping secret keys secure
-      secret: 'V3RY_STR0nG_S3CR3T_STR_vV2@v@$42AS2305(743',
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET_KEY'),
+      }),
     }),
     TypeOrmModule.forFeature([OAuthTokens, CertifyEmailCodes]),
   ],

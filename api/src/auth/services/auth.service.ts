@@ -11,8 +11,9 @@ import {
   Users,
 } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/services/users.service';
-import { CertifyEmailCodes } from './../entities/certify-email-code.entity';
-import { OAuthTokens } from './../entities/oauth-tokens.entity';
+import { CertifyEmailCodes } from '../entities/certify-email-code.entity';
+import { OAuthTokens } from '../entities/oauth-tokens.entity';
+import { LoginOutput } from '../../users/dtos/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,15 +29,26 @@ export class AuthService {
   async validateLocalUser(
     username: string,
     password: string,
-  ): Promise<string | null> {
+  ): Promise<LoginOutput> {
+    const result: LoginOutput = {
+      ok: false,
+      token: null,
+    };
+
     const user = await this.usersService.findUserByUsername(username);
     if (user) {
       const isValid = await user.checkPassword(password);
-      if (user && isValid) {
-        return this.createJwt(user.id);
+      if (isValid) {
+        result.ok = true;
+        result.token = await this.createJwt(user.id);
+      } else {
+        result.error = 'Invalid password';
       }
+    } else {
+      result.error = 'User not found';
     }
-    return null;
+
+    return result;
   }
 
   //--START: OAuth2

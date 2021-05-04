@@ -41,8 +41,9 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const user = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(user);
+    return this.usersRepository.save(
+      this.usersRepository.create(createUserDto),
+    );
   }
 
   async updateUser(
@@ -61,11 +62,11 @@ export class UsersService {
   }
 
   async deleteUser(userId: number): Promise<boolean> {
-    const result = await this.usersRepository.delete(userId);
-    return result.affected > 0;
+    const deleteResult = await this.usersRepository.delete(userId);
+    return deleteResult.affected > 0;
   }
 
-  async updateUserAvatar(user: Users, avatar: Files) {
+  async editUserAvatar(user: Users, avatar: Files) {
     return this.usersRepository.update(user.id, {
       avatar,
     });
