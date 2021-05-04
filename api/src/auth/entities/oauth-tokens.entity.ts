@@ -12,7 +12,7 @@ export class OAuthTokens {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Users, { eager: true })
+  @OneToOne(() => Users)
   @JoinColumn()
   user: Users;
 

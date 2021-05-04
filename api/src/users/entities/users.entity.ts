@@ -38,7 +38,7 @@ registerEnumType(AccountType, { name: 'AccountType' });
 @Entity()
 export class Users extends CommonEntity {
   @JoinColumn()
-  @OneToOne(() => Files, { nullable: true, eager: true })
+  @OneToOne(() => Files, { nullable: true })
   avatar?: Files;
 
   @Field(() => String)
