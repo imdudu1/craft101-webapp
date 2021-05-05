@@ -8,14 +8,12 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { Users } from '../entities/users.entity';
 import { UsersService } from '../services/users.service';
-import { AuthService } from '../../auth/services/auth.service';
 
 @Resolver()
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly filesService: FilesService,
-    private readonly authService: AuthService,
   ) {}
 
   @Mutation(() => Users)
@@ -24,10 +22,8 @@ export class UsersResolver {
   }
 
   @Query(() => LoginOutput)
-  async login(
-    @Args() { username, password }: LoginInput,
-  ): Promise<LoginOutput> {
-    return this.authService.validateLocalUser(username, password);
+  async login(@Args() loginInput: LoginInput): Promise<LoginOutput> {
+    return this.usersService.login(loginInput);
   }
 
   @Mutation(() => Boolean)

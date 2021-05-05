@@ -98,7 +98,6 @@ type MCStatus {
 
 type Mutation {
   addRecommendation(id: Float!, type: RecommendationType!): CreateRecommendationOutputDto!
-  confirmCertifyEmailCode: Boolean!
   createUser(email: String!, nickname: String!, password: String!, username: String!): Users!
   deleteArticle(id: Float!): Boolean!
   deleteCategory(id: Float!): Boolean!
@@ -109,7 +108,6 @@ type Mutation {
   newArticle(articleType: ArticleType!, category: Float!, discord: String!, explanation: String!, homepage: String!, host: String!, name: String!, tags: [String!], thumbnail: String!): Articles!
   newCategory(name: String!): Categories!
   newComment(articleId: Float!, comment: CreateCommentDto!): Comments!
-  requestCertifyEmail: Boolean!
   updateArticle(articleType: ArticleType, category: Float, discord: String, explanation: String, homepage: String, host: String, id: Float!, name: String, tags: [String!], thumbnail: String): Articles!
   updateComment(comment: UpdateCommentDto!, commentId: Float!): Comments!
 }

@@ -49,7 +49,7 @@ import { UsersModule } from './users/users.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        playground: configService.get('GRAPHQL_PLAYGROUND'),
+        playground: configService.get<boolean>('GRAPHQL_PLAYGROUND'),
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         sortSchema: true,
         context: ({ req, connection }) => {
@@ -67,11 +67,11 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        username: configService.get('POSTGRES_USER'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DB'),
+        host: configService.get<string>('POSTGRES_HOST'),
+        port: configService.get<number>('POSTGRES_PORT'),
+        username: configService.get<string>('POSTGRES_USER'),
+        password: configService.get<string>('POSTGRES_PASSWORD'),
+        database: configService.get<string>('POSTGRES_DB'),
         synchronize: true,
         logging: 'all',
         entities: [
@@ -96,7 +96,5 @@ import { UsersModule } from './users/users.module';
     PubSubModule,
     FilesModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

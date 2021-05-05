@@ -1,26 +1,25 @@
-import { Controller, Get, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Redirect, Req, UseGuards } from '@nestjs/common';
+import { AuthService } from '../../auth/services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FRONT_SERVER_URL } from '../../constants';
-import { AuthService } from '../services/auth.service';
 
-@Controller('auth')
-export class AuthController {
+@Controller('users')
+export class UsersController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoAuth(@Req() req) {
+  async kakaoAuth() {
     return;
   }
 
   @Get('kakao/callback')
   @Redirect('/', 301)
   @UseGuards(AuthGuard('kakao'))
-  async kakaoAuthCallback(@Req() req, @Res() res) {
+  async kakaoAuthCallback(@Req() req) {
     const token = await this.authService.createJwt(req.user);
-    const url = `${FRONT_SERVER_URL}/auth/kakao/${token}`;
     return {
-      url,
+      url: `${FRONT_SERVER_URL}/auth/kakao/${token}`,
     };
   }
 }

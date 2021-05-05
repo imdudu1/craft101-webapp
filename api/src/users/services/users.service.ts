@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthService } from 'src/auth/services/auth.service';
 import { Files } from 'src/files/entities/files.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { Users } from '../entities/users.entity';
 
@@ -11,28 +13,18 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    private readonly authServices: AuthService,
   ) {}
 
-  async findUserById(id: number): Promise<Users> {
-    return this.usersRepository.findOne({ id });
-  }
-
-  async findUserByUsername(username: string): Promise<Users> {
-    return this.usersRepository.findOne({ username });
-  }
-
-  async findUserByEmail(email: string) {
-    return this.usersRepository.findOne({ email });
-  }
-
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
+    const { username, email } = createUserDto;
     const exists = await this.usersRepository
       .createQueryBuilder('users')
       .where('username = :username')
       .orWhere('email = :email')
       .setParameters({
-        username: createUserDto.username,
-        email: createUserDto.email,
+        username,
+        email,
       })
       .getOne();
     if (exists) {
@@ -46,11 +38,27 @@ export class UsersService {
     );
   }
 
+  async login({ username, password }: LoginInput): Promise<LoginOutput> {
+    const user = await this.usersRepository.findOne({ username });
+    const isValid = user?.checkPassword(password);
+    if (!isValid) {
+      return {
+        ok: false,
+        error: 'User not found',
+      };
+    }
+    const token = await this.authServices.createJwt(user.id);
+    return {
+      ok: true,
+      token,
+    };
+  }
+
   async updateUser(
     userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<Users> {
-    const user = await this.findUserById(userId);
+    const user = await this.usersRepository.findOne({ id: userId });
     if (user.certifyEmail && updateUserDto.email) {
       user.certifyEmail = updateUserDto.email === user.email;
     }
