@@ -20,6 +20,7 @@ import { LiveMCService } from './services/live-mc.service';
       }),
     }),
     TypeOrmModule.forFeature([PlayerHistories]),
+    ConfigModule,
   ],
   providers: [LiveMCGateway, LiveMCService],
   exports: [LiveMCService],
