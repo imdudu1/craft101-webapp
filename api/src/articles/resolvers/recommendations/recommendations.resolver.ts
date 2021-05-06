@@ -11,7 +11,6 @@ import { RecommendationsService } from 'src/articles/services/recommendations/re
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
 import { PUB_SUB } from 'src/pubsub/pubsub.module';
-import { Users } from 'src/users/entities/users.entity';
 
 const RECOMMENDATION_ADDED_EVENT = 'recommendationAdded';
 
@@ -26,14 +25,14 @@ export class RecommendationsResolver {
   @AllowUserRoles(['ANY'])
   async addRecommendation(
     @Args() createRecommendationInputDto: AddRecommendationInputDto,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
   ): Promise<CreateRecommendationOutputDto> {
     const result = await this.recommendationsService.addRecommendation(
       createRecommendationInputDto,
       authUser,
     );
     if (result.ok) {
-      this.pubSub.publish(RECOMMENDATION_ADDED_EVENT, {
+      await this.pubSub.publish(RECOMMENDATION_ADDED_EVENT, {
         recommendationAdded: {
           id: createRecommendationInputDto.id,
           count: result.count,

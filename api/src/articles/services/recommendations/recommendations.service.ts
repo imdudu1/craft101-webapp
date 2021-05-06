@@ -8,7 +8,6 @@ import {
   Recommendations,
   RecommendationType,
 } from 'src/articles/entities/recommendations.entity';
-import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -28,7 +27,7 @@ export class RecommendationsService {
 
   private async isExistRecommendation(
     targetId: number,
-    user: Users,
+    user: number,
     recommendationType: RecommendationType,
   ): Promise<boolean> {
     const [
@@ -46,7 +45,7 @@ export class RecommendationsService {
 
   async addRecommendation(
     { id, type }: AddRecommendationInputDto,
-    user: Users,
+    user: number,
   ): Promise<CreateRecommendationOutputDto> {
     const exist = await this.isExistRecommendation(id, user, type);
     if (exist) {
@@ -59,7 +58,9 @@ export class RecommendationsService {
     const condition = this.generateRecommendTypeCondition(id, type);
     await this.recommendationsRepository.save(
       this.recommendationsRepository.create({
-        user,
+        user: {
+          id: user,
+        },
         ...condition,
         recommendationType: type,
       }),

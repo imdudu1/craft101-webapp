@@ -35,7 +35,7 @@ export class UsersResolver {
   @Mutation(() => Boolean)
   @AllowUserRoles(['ANY'])
   async editUserAvatar(
-    @AuthUser() authUser,
+    @AuthUser() authUser: number,
     @Args({ name: 'avatar', type: () => GraphQLUpload })
     { filename, createReadStream }: FileUpload,
   ): Promise<boolean> {
@@ -50,7 +50,7 @@ export class UsersResolver {
 
   @Query(() => Users)
   @AllowUserRoles(['ANY'])
-  async me(@AuthUser() authUser: Users): Promise<Users> {
-    return authUser;
+  async me(@AuthUser() authUser: number): Promise<Users> {
+    return this.usersService.findOneUser({ id: authUser });
   }
 }

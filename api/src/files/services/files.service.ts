@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { S3 } from 'aws-sdk';
 import { ReadStream } from 'node:fs';
-import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Files } from '../entities/files.entity';
@@ -17,7 +16,7 @@ export class FilesService {
   ) {}
 
   async uploadFile(
-    uploader: Users,
+    uploader: number,
     filename: string,
     fileReadStream: ReadStream,
   ): Promise<Files> {
@@ -30,7 +29,9 @@ export class FilesService {
       })
       .promise();
     const newFile = this.filesRepository.create({
-      user: uploader,
+      user: {
+        id: uploader,
+      },
       key: uploadResult.Key,
       url: uploadResult.Location,
     });

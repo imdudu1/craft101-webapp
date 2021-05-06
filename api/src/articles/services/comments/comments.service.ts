@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCommentDto } from 'src/articles/dtos/commentDtos/create-comment.dto';
 import { UpdateCommentDto } from 'src/articles/dtos/commentDtos/update-comment.dto';
 import { Comments } from 'src/articles/entities/comments.entity';
-import { Users } from 'src/users/entities/users.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ArticlesService } from '../articles/articles.service';
 
@@ -23,20 +22,27 @@ export class CommentsService {
     });
   }
 
-  async deleteComment(id: number, author: Users): Promise<DeleteResult> {
+  async deleteComment(id: number, author: number): Promise<DeleteResult> {
     return this.commentsRepository.delete({
       id,
-      author,
+      author: {
+        id: author,
+      },
     });
   }
 
   async updateComment(
     id: number,
-    author: Users,
+    author: number,
     { content }: UpdateCommentDto,
   ): Promise<UpdateResult> {
     return this.commentsRepository.update(
-      { id, author },
+      {
+        id,
+        author: {
+          id: author,
+        },
+      },
       {
         content,
       },
@@ -45,7 +51,7 @@ export class CommentsService {
 
   async createComment(
     articleId: number,
-    author: Users,
+    author: number,
     { content }: CreateCommentDto,
   ): Promise<Comments> {
     const { article, ok } = await this.articlesService.findArticleById(
@@ -55,7 +61,9 @@ export class CommentsService {
       const newComment = this.commentsRepository.create({
         article,
         content,
-        author,
+        author: {
+          id: author,
+        },
       });
       return this.commentsRepository.save(newComment);
     }

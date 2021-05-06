@@ -2,7 +2,6 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateArticleDto } from 'src/articles/dtos/articleDtos/create-article.dto';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
-import { Users } from 'src/users/entities/users.entity';
 import { McStatusOutputDto } from '../../../live-mc/dtos/mc-status-output.dto';
 import { LiveMCService } from '../../../live-mc/services/live-mc.service';
 import {
@@ -55,14 +54,14 @@ export class ArticlesResolver {
 
   @Query(() => [Articles])
   @AllowUserRoles(['ANY'])
-  async myArticles(@AuthUser() authUser: Users) {
+  async myArticles(@AuthUser() authUser: number) {
     return this.articleService.userArticle(authUser);
   }
 
   @Mutation(() => Articles)
   @AllowUserRoles(['ANY'])
   async newArticle(
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
     @Args() createArticleDto: CreateArticleDto,
   ): Promise<Articles> {
     return this.articleService.createArticle(authUser, createArticleDto);
@@ -72,7 +71,7 @@ export class ArticlesResolver {
   @AllowUserRoles(['ANY'])
   async updateArticle(
     @Args('id') id: number,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
     @Args() updateArticleDto: UpdateArticleDto,
   ): Promise<Articles> {
     return this.articleService.updateArticle(id, authUser, updateArticleDto);
@@ -82,7 +81,7 @@ export class ArticlesResolver {
   @AllowUserRoles(['ANY'])
   async deleteArticle(
     @Args('id') id: number,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
   ): Promise<boolean> {
     return this.articleService.deleteArticle(id, authUser);
   }

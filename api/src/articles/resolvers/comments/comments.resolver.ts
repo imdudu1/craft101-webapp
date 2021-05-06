@@ -8,7 +8,6 @@ import { CommentsService } from 'src/articles/services/comments/comments.service
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
 import { PUB_SUB } from 'src/pubsub/pubsub.module';
-import { Users } from 'src/users/entities/users.entity';
 
 const COMMENT_ADDED_EVENT = 'commentAdded';
 
@@ -28,7 +27,7 @@ export class CommentsResolver {
   @AllowUserRoles(['ANY'])
   async deleteComments(
     @Args('commentId') commentId: number,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
   ) {
     return this.commentsService.deleteComment(commentId, authUser);
   }
@@ -37,7 +36,7 @@ export class CommentsResolver {
   @AllowUserRoles(['ANY'])
   async updateComment(
     @Args('commentId') commentId: number,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
     @Args('comment') updateCommentDto: UpdateCommentDto,
   ) {
     return this.commentsService.updateComment(
@@ -51,7 +50,7 @@ export class CommentsResolver {
   @AllowUserRoles(['ANY'])
   async newComment(
     @Args('articleId') articleId: number,
-    @AuthUser() authUser: Users,
+    @AuthUser() authUser: number,
     @Args('comment') createCommentDto: CreateCommentDto,
   ) {
     const newComment = await this.commentsService.createComment(

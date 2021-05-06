@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleDto } from 'src/articles/dtos/articleDtos/create-article.dto';
-import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 import { ArticleDetailOutputDto } from '../../dtos/articleDtos/article-detail.dto';
 import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
@@ -28,9 +27,11 @@ export class ArticlesService {
       .getMany();
   }
 
-  async userArticle(user: Users): Promise<Articles[]> {
+  async userArticle(id: number): Promise<Articles[]> {
     return this.articlesRepository.find({
-      author: user,
+      author: {
+        id,
+      },
     });
   }
 
@@ -59,7 +60,7 @@ export class ArticlesService {
   }
 
   async createArticle(
-    author: Users,
+    author: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Articles> {
     /*
@@ -80,7 +81,11 @@ export class ArticlesService {
     });
     */
     const created = Object.assign(
-      this.articlesRepository.create({ author }),
+      this.articlesRepository.create({
+        author: {
+          id: author,
+        },
+      }),
       createArticleDto,
     );
     return this.articlesRepository.save(created);
@@ -89,10 +94,13 @@ export class ArticlesService {
   // TODO: Output DTO 작성
   async updateArticle(
     id: number,
-    author: Users,
+    author: number,
     { tags, ...data }: UpdateArticleDto,
   ): Promise<Articles> {
-    const toUpdate = await this.articlesRepository.findOne({ id, author });
+    const toUpdate = await this.articlesRepository.findOne({
+      id,
+      author: { id: author },
+    });
     if (toUpdate) {
       const updated = Object.assign(toUpdate, data);
       if (tags !== undefined) {
@@ -107,7 +115,7 @@ export class ArticlesService {
     throw new BadRequestException();
   }
 
-  async deleteArticle(id: number, author: Users): Promise<boolean> {
+  async deleteArticle(id: number, author: number): Promise<boolean> {
     const result = await this.articlesRepository
       .createQueryBuilder()
       .delete()

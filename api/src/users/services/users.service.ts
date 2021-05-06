@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/services/auth.service';
 import { Files } from 'src/files/entities/files.entity';
-import { Repository } from 'typeorm';
+import { FindConditions, Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
@@ -15,6 +15,14 @@ export class UsersService {
     private readonly usersRepository: Repository<Users>,
     private readonly authServices: AuthService,
   ) {}
+
+  async findAllUser(conditions: FindConditions<Users>) {
+    return this.usersRepository.find(conditions);
+  }
+
+  async findOneUser(conditions: FindConditions<Users>) {
+    return this.usersRepository.findOne(conditions);
+  }
 
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
     const { username, email } = createUserDto;
@@ -74,8 +82,8 @@ export class UsersService {
     return deleteResult.affected > 0;
   }
 
-  async editUserAvatar(user: Users, avatar: Files) {
-    return this.usersRepository.update(user.id, {
+  async editUserAvatar(user: number, avatar: Files) {
+    return this.usersRepository.update(user, {
       avatar,
     });
   }
