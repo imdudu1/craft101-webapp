@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 import { McStatusOutputDto } from '../dtos/mc-status-output.dto';
 import { PlayerHistories } from '../entities/player-histories.entity';
 import { MCStatus } from '../types/mc-status.type';
-import Redlock from 'redlock';
+import * as Redlock from 'redlock';
 
 @Injectable()
 export class LiveMCService {
@@ -77,20 +77,27 @@ export class LiveMCService {
 
   @Cron(CronExpression.EVERY_30_MINUTES)
   async checkMCServerStatus() {
-    this.redlock.lock('', 123).then(async (lock) => {
-      const adArticles = await this.articlesService.allAdArticles();
-      await Promise.all(
-        adArticles.map(async (adArticle) => {
-          const { host } = adArticle;
-          const { ok, status } = await this.getMCServerStatus(host);
-          let currentOnlinePlayers = 0;
-          if (ok) {
-            currentOnlinePlayers = status.onlinePlayers;
-          }
-          await this.createPlayerHistory(adArticle, currentOnlinePlayers);
-        }),
-      );
-      return lock.unlock().catch((err) => console.log(err));
-    });
+    this.redlock
+      .lock('locks:history:322456', 1800)
+      .then(async (lock) => {
+        const adArticles = await this.articlesService.allAdArticles();
+        await Promise.all(
+          adArticles.map(async (adArticle) => {
+            const { host } = adArticle;
+            const { ok, status } = await this.getMCServerStatus(host);
+            let currentOnlinePlayers = 0;
+            if (ok) {
+              currentOnlinePlayers = status.onlinePlayers;
+            }
+            await this.createPlayerHistory(adArticle, currentOnlinePlayers);
+          }),
+        );
+        return lock.unlock().catch(() => {
+          return;
+        });
+      })
+      .catch(() => {
+        return;
+      });
   }
 }
