@@ -11,15 +11,15 @@ import { FileUpload } from 'graphql-upload';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
 import { FilesService } from 'src/files/services/files.service';
+import { ArticlesService } from '../../articles/services/articles/articles.service';
+import { CommentsService } from '../../articles/services/comments/comments.service';
+import { RecommendationsService } from '../../articles/services/recommendations/recommendations.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { Users } from '../entities/users.entity';
 import { UsersService } from '../services/users.service';
-import { ArticlesService } from '../../articles/services/articles/articles.service';
-import { CommentsService } from '../../articles/services/comments/comments.service';
-import { RecommendationsService } from '../../articles/services/recommendations/recommendations.service';
 
-@Resolver((of) => Users)
+@Resolver(() => Users)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,

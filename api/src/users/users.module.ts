@@ -11,10 +11,10 @@ import { ArticlesModule } from '../articles/articles.module';
 
 @Module({
   imports: [
+    ArticlesModule,
     AuthModule,
     TypeOrmModule.forFeature([Users, Articles]),
     FilesModule,
-    ArticlesModule,
   ],
   providers: [UsersService, UsersResolver],
   exports: [UsersService],

@@ -15,6 +15,6 @@ export class Files extends CommonEntity {
   key: string;
 
   @Field(() => Users)
-  @ManyToOne(() => Users, (user) => user.files)
+  @ManyToOne(() => Users, (user) => user.files, { eager: true })
   user: Users;
 }

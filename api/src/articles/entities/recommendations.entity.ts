@@ -15,15 +15,19 @@ registerEnumType(RecommendationType, { name: 'RecommendationType' });
 @Entity()
 export class Recommendations extends CommonEntity {
   @Field(() => Users)
-  @ManyToOne(() => Users, (user) => user.recommendations)
+  @ManyToOne(() => Users, (user) => user.recommendations, { eager: true })
   user: Users;
 
   @Field(() => Articles, { nullable: true })
-  @ManyToOne(() => Articles, (article) => article.recommendations)
+  @ManyToOne(() => Articles, (article) => article.recommendations, {
+    eager: true,
+  })
   article?: Articles;
 
   @Field(() => Comments, { nullable: true })
-  @ManyToOne(() => Comments, (comment) => comment.recommendations)
+  @ManyToOne(() => Comments, (comment) => comment.recommendations, {
+    eager: true,
+  })
   comment?: Comments;
 
   @Field(() => RecommendationType)

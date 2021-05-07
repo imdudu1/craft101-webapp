@@ -22,6 +22,6 @@ export class Comments extends CommonEntity {
   recommendations: Recommendations[];
 
   @Field(() => Users)
-  @ManyToOne(() => Users, (user) => user.comments)
+  @ManyToOne(() => Users, (user) => user.comments, { eager: true })
   author: Users;
 }

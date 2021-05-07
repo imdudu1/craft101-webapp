@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { CreateArticleDto } from 'src/articles/dtos/articleDtos/create-article.dto';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
@@ -11,12 +18,16 @@ import {
 import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
 import { Articles } from '../../entities/articles.entity';
 import { ArticlesService } from '../../services/articles/articles.service';
+import { CommentsService } from '../../services/comments/comments.service';
+import { RecommendationsService } from '../../services/recommendations/recommendations.service';
 
 @Resolver(() => Articles)
 export class ArticlesResolver {
   constructor(
     private readonly articleService: ArticlesService,
     private readonly liveMCService: LiveMCService,
+    private readonly commentsService: CommentsService,
+    private readonly recommendationsService: RecommendationsService,
   ) {}
 
   @Query(() => ArticleDetailOutputDto)
@@ -84,5 +95,15 @@ export class ArticlesResolver {
     @AuthUser() authUser: number,
   ): Promise<boolean> {
     return this.articleService.deleteArticle(id, authUser);
+  }
+
+  @ResolveField()
+  async comments(@Parent() article: Articles) {
+    return this.commentsService.findCommentsByArticleId(article.id);
+  }
+
+  @ResolveField()
+  async recommendations(@Parent() article: Articles) {
+    return this.recommendationsService.getArticleRecommendations(article.id);
   }
 }

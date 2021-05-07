@@ -51,6 +51,14 @@ export class RecommendationsService {
     });
   }
 
+  async getArticleRecommendations(articleId: number) {
+    return this.recommendationsRepository.find({
+      article: {
+        id: articleId,
+      },
+    });
+  }
+
   async addRecommendation(
     { id, type }: AddRecommendationInputDto,
     user: number,
