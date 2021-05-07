@@ -22,6 +22,14 @@ export class CommentsService {
     });
   }
 
+  async findUserComments(userId: number): Promise<Comments[]> {
+    return this.commentsRepository.find({
+      author: {
+        id: userId,
+      },
+    });
+  }
+
   async deleteComment(id: number, author: number): Promise<DeleteResult> {
     return this.commentsRepository.delete({
       id,

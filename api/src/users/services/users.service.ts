@@ -16,11 +16,11 @@ export class UsersService {
     private readonly authServices: AuthService,
   ) {}
 
-  async findAllUser(conditions: FindConditions<Users>) {
+  async findUsers(conditions: FindConditions<Users>) {
     return this.usersRepository.find(conditions);
   }
 
-  async findOneUser(conditions: FindConditions<Users>) {
+  async findUser(conditions: FindConditions<Users>) {
     return this.usersRepository.findOne(conditions);
   }
 

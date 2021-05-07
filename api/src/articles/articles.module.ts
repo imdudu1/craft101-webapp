@@ -48,6 +48,12 @@ import { TagsService } from './services/tags/tags.service';
     RecommendationsResolver,
     RecommendationsService,
   ],
-  exports: [ArticlesService, TagsService, CommentsService, CategoriesService],
+  exports: [
+    ArticlesService,
+    TagsService,
+    CommentsService,
+    CategoriesService,
+    RecommendationsService,
+  ],
 })
 export class ArticlesModule {}

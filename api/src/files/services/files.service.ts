@@ -15,6 +15,14 @@ export class FilesService {
     private readonly configService: ConfigService,
   ) {}
 
+  async userUploadFiles(userId: number) {
+    return this.filesRepository.find({
+      user: {
+        id: userId,
+      },
+    });
+  }
+
   async uploadFile(
     uploader: number,
     filename: string,

@@ -43,6 +43,14 @@ export class RecommendationsService {
     return numberOfRecommends > 0;
   }
 
+  async userRecommendationHistory(userId: number) {
+    return this.recommendationsRepository.find({
+      user: {
+        id: userId,
+      },
+    });
+  }
+
   async addRecommendation(
     { id, type }: AddRecommendationInputDto,
     user: number,

@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { GraphQLUpload } from 'apollo-server-express';
 import { FileUpload } from 'graphql-upload';
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
@@ -8,12 +15,18 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { Users } from '../entities/users.entity';
 import { UsersService } from '../services/users.service';
+import { ArticlesService } from '../../articles/services/articles/articles.service';
+import { CommentsService } from '../../articles/services/comments/comments.service';
+import { RecommendationsService } from '../../articles/services/recommendations/recommendations.service';
 
-@Resolver()
+@Resolver((of) => Users)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly filesService: FilesService,
+    private readonly articlesService: ArticlesService,
+    private readonly commentsService: CommentsService,
+    private readonly recommendationsService: RecommendationsService,
   ) {}
 
   @Mutation(() => Users)
@@ -51,6 +64,26 @@ export class UsersResolver {
   @Query(() => Users)
   @AllowUserRoles(['ANY'])
   async me(@AuthUser() authUser: number): Promise<Users> {
-    return this.usersService.findOneUser({ id: authUser });
+    return this.usersService.findUser({ id: authUser });
+  }
+
+  @ResolveField()
+  async articles(@Parent() user: Users) {
+    return this.articlesService.userArticle(user.id);
+  }
+
+  @ResolveField()
+  async comments(@Parent() user: Users) {
+    return this.commentsService.findUserComments(user.id);
+  }
+
+  @ResolveField()
+  async files(@Parent() user: Users) {
+    return this.filesService.userUploadFiles(user.id);
+  }
+
+  @ResolveField()
+  async recommendations(@Parent() user: Users) {
+    return this.recommendationsService.userRecommendationHistory(user.id);
   }
 }
