@@ -1,9 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleDto } from 'src/articles/dtos/articleDtos/create-article.dto';
 import { Repository } from 'typeorm';
 import { ArticleDetailOutputDto } from '../../dtos/articleDtos/article-detail.dto';
-import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
+import {
+  UpdateArticleDto,
+  UpdateArticleOutputDto,
+} from '../../dtos/articleDtos/update-article.dto';
 import { Articles, ArticleType } from '../../entities/articles.entity';
 import { Tags } from '../../entities/tags.entity';
 import { TagsService } from '../tags/tags.service';
@@ -63,40 +66,31 @@ export class ArticlesService {
     author: number,
     createArticleDto: CreateArticleDto,
   ): Promise<Articles> {
-    /*
-    const { tagList, ...otherParts } = createArticleDto;
+    const { tags, ...otherParts } = createArticleDto;
     const convertedTags: Tags[] = [];
-    if (tagList !== undefined) {
-      // TODO: 최적화를 위해 없는 태그에 대해 개별적인 INSERT가 아닌 일괄 INSERT가 되도록 수정
+    if (tags !== undefined) {
       await Promise.all(
-        tagList.map(async (tag) => {
+        tags.map(async (tag) => {
           const tagObj = await this.tagsService.getOrCreate(tag);
           convertedTags.push(tagObj);
         }),
       );
     }
-    const created = Object.assign(this.articlesRepository.create({ author }), {
-      ...otherParts,
-      tags: Promise.resolve(convertedTags),
-    });
-    */
     const created = Object.assign(
-      this.articlesRepository.create({
-        author: {
-          id: author,
-        },
-      }),
-      createArticleDto,
+      this.articlesRepository.create({ author: { id: author } }),
+      {
+        ...otherParts,
+        tags: Promise.resolve(convertedTags),
+      },
     );
     return this.articlesRepository.save(created);
   }
 
-  // TODO: Output DTO 작성
   async updateArticle(
     id: number,
     author: number,
     { tags, ...data }: UpdateArticleDto,
-  ): Promise<Articles> {
+  ): Promise<UpdateArticleOutputDto> {
     const toUpdate = await this.articlesRepository.findOne({
       id,
       author: { id: author },
@@ -105,14 +99,24 @@ export class ArticlesService {
       const updated = Object.assign(toUpdate, data);
       if (tags !== undefined) {
         const convertedTags: Tags[] = [];
-        for (const tag of tags) {
-          convertedTags.push(await this.tagsService.getOrCreate(tag));
-        }
+        await Promise.all(
+          tags.map(async (tag) => {
+            const tagObj = await this.tagsService.getOrCreate(tag);
+            convertedTags.push(tagObj);
+          }),
+        );
         updated.tags = Promise.resolve(convertedTags);
       }
-      return this.articlesRepository.save(updated);
+      const updatedArticle = await this.articlesRepository.save(updated);
+      return {
+        ok: true,
+        article: updatedArticle,
+      };
     }
-    throw new BadRequestException();
+    return {
+      ok: false,
+      error: 'Article not found',
+    };
   }
 
   async deleteArticle(id: number, author: number): Promise<boolean> {

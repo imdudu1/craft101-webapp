@@ -15,7 +15,10 @@ import {
   ArticleDetailOutputDto,
   ServerArticleDetailOutputDto,
 } from '../../dtos/articleDtos/article-detail.dto';
-import { UpdateArticleDto } from '../../dtos/articleDtos/update-article.dto';
+import {
+  UpdateArticleDto,
+  UpdateArticleOutputDto,
+} from '../../dtos/articleDtos/update-article.dto';
 import { Articles } from '../../entities/articles.entity';
 import { ArticlesService } from '../../services/articles/articles.service';
 import { CommentsService } from '../../services/comments/comments.service';
@@ -84,7 +87,7 @@ export class ArticlesResolver {
     @Args('id') id: number,
     @AuthUser() authUser: number,
     @Args() updateArticleDto: UpdateArticleDto,
-  ): Promise<Articles> {
+  ): Promise<UpdateArticleOutputDto> {
     return this.articleService.updateArticle(id, authUser, updateArticleDto);
   }
 
