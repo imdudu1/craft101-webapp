@@ -1,5 +1,13 @@
 import { Inject } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { CreateCommentDto } from 'src/articles/dtos/commentDtos/create-comment.dto';
 import { UpdateCommentDto } from 'src/articles/dtos/commentDtos/update-comment.dto';
@@ -8,13 +16,15 @@ import { CommentsService } from 'src/articles/services/comments/comments.service
 import { AllowUserRoles } from 'src/auth/decorators/allow-user-role.decorator';
 import { AuthUser } from 'src/auth/decorators/auth-user.decorator';
 import { PUB_SUB } from 'src/pubsub/pubsub.module';
+import { RecommendationsService } from '../../services/recommendations/recommendations.service';
 
 const COMMENT_ADDED_EVENT = 'commentAdded';
 
-@Resolver()
+@Resolver(() => Comments)
 export class CommentsResolver {
   constructor(
     private readonly commentsService: CommentsService,
+    private readonly recommendationsService: RecommendationsService,
     @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
   ) {}
 
@@ -60,6 +70,11 @@ export class CommentsResolver {
     );
     this.pubSub.publish(COMMENT_ADDED_EVENT, { commentAdded: newComment });
     return newComment;
+  }
+
+  @ResolveField()
+  async recommendations(@Parent() comment: Comments) {
+    return this.recommendationsService.getCommentRecommendations(comment.id);
   }
 
   @Subscription(() => Comments, {

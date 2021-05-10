@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { Users } from 'src/users/entities/users.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToOne, OneToMany } from 'typeorm';
 import { Articles } from './articles.entity';
 import { Recommendations } from './recommendations.entity';
 
@@ -14,7 +14,8 @@ export class Comments extends CommonEntity {
   content: string;
 
   @Field(() => Articles)
-  @ManyToOne(() => Articles, (article) => article.comments)
+  @ManyToOne(() => Articles, (article) => article.comments, { eager: true })
+  @JoinTable()
   article: Articles;
 
   @Field(() => [Recommendations])
@@ -23,5 +24,6 @@ export class Comments extends CommonEntity {
 
   @Field(() => Users)
   @ManyToOne(() => Users, (user) => user.comments, { eager: true })
+  @JoinTable()
   author: Users;
 }

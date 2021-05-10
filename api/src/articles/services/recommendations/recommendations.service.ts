@@ -56,6 +56,16 @@ export class RecommendationsService {
       article: {
         id: articleId,
       },
+      recommendationType: RecommendationType.ARTICLE,
+    });
+  }
+
+  async getCommentRecommendations(commentId: number) {
+    return this.recommendationsRepository.find({
+      comment: {
+        id: commentId,
+      },
+      recommendationType: RecommendationType.COMMENT,
     });
   }
 

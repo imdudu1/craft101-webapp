@@ -33,6 +33,7 @@ registerEnumType(ArticleType, { name: 'ArticleType' });
 export class Articles extends CommonEntity {
   @Field(() => Users)
   @ManyToOne(() => Users, (user) => user.articles, { eager: true })
+  @JoinTable()
   author: Users;
 
   @Field(() => String)
@@ -61,6 +62,7 @@ export class Articles extends CommonEntity {
 
   @Field(() => Categories)
   @ManyToOne(() => Categories, (category) => category.articles, { eager: true })
+  @JoinTable()
   category: Categories;
 
   @Field(() => [Comments])
