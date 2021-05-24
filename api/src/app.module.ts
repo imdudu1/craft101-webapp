@@ -39,6 +39,7 @@ import { UsersModule } from './users/users.module';
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
         JWT_SECRET_KEY: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.number().required(),
         AWS_REGION: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
