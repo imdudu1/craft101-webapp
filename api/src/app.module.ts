@@ -22,6 +22,10 @@ import { LiveMCModule } from './live-mc/live-mc.module';
 import { PubSubModule } from './pubsub/pubsub.module';
 import { Users } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
+import { ChatModule } from './chat/chat.module';
+import { Messages } from './chat/entities/message.entity';
+import { Rooms } from './chat/entities/room.entity';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -86,6 +90,8 @@ import { UsersModule } from './users/users.module';
           Comments,
           Recommendations,
           Files,
+          Messages,
+          Rooms,
         ],
       }),
     }),
@@ -96,6 +102,8 @@ import { UsersModule } from './users/users.module';
     LiveMCModule,
     PubSubModule,
     FilesModule,
+    ChatModule,
   ],
+  providers: [ChatGateway],
 })
 export class AppModule {}
