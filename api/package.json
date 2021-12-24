@@ -50,6 +50,7 @@
     "graphql-upload": "^11.0.0",
     "jsonwebtoken": "^8.5.1",
     "minecraft-server-util": "^3.4.4",
+    "mysql2": "^2.3.3",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-kakao": "^1.0.1",
