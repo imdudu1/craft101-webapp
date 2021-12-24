@@ -190,7 +190,6 @@ enum UserRole {
 type Users {
   accountType: AccountType!
   articles: [Articles!]!
-  certifyEmail: Boolean!
   comments: [Comments!]!
   createdAt: DateTime!
   email: String!

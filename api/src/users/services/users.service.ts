@@ -6,7 +6,11 @@ import { FindConditions, Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
-import { Users } from '../entities/users.entity';
+import { CreateUserProps, Users } from '../entities/users.entity';
+import { Password } from '../entities/vo/password.vo';
+import { Email } from '../entities/vo/email.vo';
+import { Username } from '../entities/vo/username.vo';
+import { Nickname } from '../entities/vo/nickname.vo';
 
 @Injectable()
 export class UsersService {
@@ -25,40 +29,53 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
-    const { username, email } = createUserDto;
-    const exists = await this.usersRepository
-      .createQueryBuilder('users')
-      .where('username = :username')
-      .orWhere('email = :email')
-      .setParameters({
-        username,
-        email,
-      })
-      .getOne();
-    if (exists) {
-      throw new HttpException(
-        'Username OR Email already exists',
-        HttpStatus.BAD_REQUEST,
+    const getUserOneByUsernameAndEmail = (username: string, email: string) => {
+      return (
+        this.usersRepository
+          .createQueryBuilder('users')
+          // TODO: 컬럼명 매칭 오류 제거
+          .where('usernameValue = :username')
+          .orWhere('emailValue = :email')
+          .setParameters({
+            username,
+            email,
+          })
+          .getOne()
       );
+    };
+    const { username, email, password, nickname } = createUserDto;
+
+    const newUser: CreateUserProps = {
+      email: new Email({ value: email }),
+      password: new Password(password),
+      nickname: new Nickname(nickname),
+      username: new Username(username),
+    };
+
+    if (!!!(await getUserOneByUsernameAndEmail(username, email))) {
+      return this.usersRepository.save(this.usersRepository.create(newUser));
     }
-    return this.usersRepository.save(
-      this.usersRepository.create(createUserDto),
+
+    throw new HttpException(
+      'Username OR Email already exists',
+      HttpStatus.BAD_REQUEST,
     );
   }
 
+  // TODO: 인증 처리 이동
   async login({ username, password }: LoginInput): Promise<LoginOutput> {
-    const user = await this.usersRepository.findOne({ username });
-    const isValid = user?.checkPassword(password);
-    if (!isValid) {
+    // TODO: username으로 이용자 찾기
+    const user = await this.usersRepository.findOne(1);
+    if (!!user && user.matchPassword(password)) {
+      const token = await this.authServices.createJwt(user.id);
       return {
-        ok: false,
-        error: 'User not found',
+        ok: true,
+        token,
       };
     }
-    const token = await this.authServices.createJwt(user.id);
     return {
-      ok: true,
-      token,
+      ok: false,
+      error: 'User not found',
     };
   }
 
@@ -67,11 +84,8 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<Users> {
     const user = await this.usersRepository.findOne({ id: userId });
-    if (user.certifyEmail && updateUserDto.email) {
-      user.certifyEmail = updateUserDto.email === user.email;
-    }
-    if (user) {
-      Object.assign(user, updateUserDto);
+    if (user.isCertifiedUser()) {
+      // TODO: 사용자 정보 수정 로직 추가
       return this.usersRepository.save(user);
     }
     return null;

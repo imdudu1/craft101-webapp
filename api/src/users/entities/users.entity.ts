@@ -4,22 +4,17 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import * as argon2 from 'argon2';
 import { IsEnum } from 'class-validator';
-import { Articles } from 'src/articles/entities/articles.entity';
-import { Comments } from 'src/articles/entities/comments.entity';
-import { Recommendations } from 'src/articles/entities/recommendations.entity';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { Files } from 'src/files/entities/files.entity';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Articles } from '../../articles/entities/articles.entity';
+import { Comments } from '../../articles/entities/comments.entity';
+import { Recommendations } from '../../articles/entities/recommendations.entity';
+import { Password } from './vo/password.vo';
+import { Username } from './vo/username.vo';
+import { Nickname } from './vo/nickname.vo';
+import { Email } from './vo/email.vo';
 
 export enum UserRoles {
   USER = 'USER',
@@ -33,33 +28,34 @@ export enum AccountType {
 }
 registerEnumType(AccountType, { name: 'AccountType' });
 
+export type CreateUserProps = {
+  username: Username;
+  password: Password;
+  nickname: Nickname;
+  email: Email;
+};
+
 @InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Users extends CommonEntity {
-  @JoinColumn()
-  @OneToOne(() => Files, { nullable: true })
-  avatar?: Files;
+  @Field(() => String)
+  @Column((type) => Username)
+  username: Username;
 
   @Field(() => String)
-  @Column()
-  username: string;
+  @Column((type) => Password)
+  password: Password;
 
   @Field(() => String)
-  @Column()
-  password: string;
+  @Column((type) => Nickname)
+  nickname: Nickname;
 
   @Field(() => String)
-  @Column()
-  nickname: string;
+  @Column((type) => Email)
+  email: Email;
 
-  @Field(() => String)
-  @Column()
-  email: string;
-
-  @Field(() => Boolean)
-  @Column({ default: false })
-  certifyEmail: boolean;
+  //
 
   @Field(() => UserRoles)
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.USER })
@@ -70,6 +66,12 @@ export class Users extends CommonEntity {
   @Column({ type: 'enum', enum: AccountType, default: AccountType.LOCAL })
   @IsEnum(AccountType)
   accountType: AccountType;
+
+  //
+
+  @JoinColumn()
+  @OneToOne(() => Files, { nullable: true })
+  avatar: Files;
 
   @Field(() => [Articles])
   @OneToMany(() => Articles, (article) => article.author)
@@ -87,13 +89,11 @@ export class Users extends CommonEntity {
   @OneToMany(() => Files, (file) => file.user)
   files: Files[];
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    this.password = await argon2.hash(this.password);
+  isCertifiedUser(): boolean {
+    return this.email.isCertifiedUser();
   }
 
-  async checkPassword(aPassword: string): Promise<boolean> {
-    return argon2.verify(this.password, aPassword);
+  matchPassword(password: string): boolean {
+    return this.password.equals(new Password(password));
   }
 }
