@@ -24,10 +24,8 @@ export class Email {
   }
 
   private static validate(email: string) {
-    if (!!email) {
-      if (!email?.includes('@') && !email?.includes('.')) {
-        throw new Error('잘못된 형식의 이메일입니다.');
-      }
+    if (!email?.includes('@') && !email?.includes('.')) {
+      throw new Error('잘못된 형식의 메일입니다.');
     }
   }
 
