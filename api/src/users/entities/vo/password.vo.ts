@@ -17,11 +17,7 @@ export class Password {
     return argon2.hash(s);
   }
 
-  isValid(password: string) {
-    return argon2.verify(this.value, password);
-  }
-
-  equals(requestPassword: Password) {
-    return this.value == requestPassword.value;
+  isMatch(password: Password): Promise<boolean> {
+    return argon2.verify(this.value, password.value);
   }
 }

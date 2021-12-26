@@ -31,8 +31,7 @@ export class UsersResolver {
 
   @Mutation(() => Users)
   async createUser(@Args() createUserDto: CreateUserDto): Promise<Users> {
-    const user = await this.usersService.createUser(createUserDto);
-    return user;
+    return this.usersService.createUser(createUserDto);
   }
 
   @Query(() => LoginOutput)
@@ -65,7 +64,7 @@ export class UsersResolver {
   @Query(() => Users)
   @AllowUserRoles(['ANY'])
   async me(@AuthUser() authUser: number): Promise<Users> {
-    return this.usersService.findUser({ id: authUser });
+    return this.usersService.getUserById(authUser);
   }
 
   @ResolveField()

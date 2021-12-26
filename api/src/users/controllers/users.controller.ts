@@ -3,6 +3,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FRONT_SERVER_URL } from '../../constants';
 
+// TODO: 인증 모듈로 이동
 @Controller('users')
 export class UsersController {
   constructor(private readonly authService: AuthService) {}

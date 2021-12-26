@@ -1,8 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AuthService } from 'src/auth/services/auth.service';
 import { Files } from 'src/files/entities/files.entity';
-import { FindConditions, Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
@@ -11,49 +9,35 @@ import { Password } from '../entities/vo/password.vo';
 import { Email } from '../entities/vo/email.vo';
 import { Username } from '../entities/vo/username.vo';
 import { Nickname } from '../entities/vo/nickname.vo';
+import { UserRepositoryPort } from '../database/user.repository.port';
+import { UserTypeormRepository } from '../database/user.typeorm.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
+    @Inject(UserTypeormRepository)
+    private readonly usersRepository: UserRepositoryPort,
     private readonly authServices: AuthService,
   ) {}
 
-  async findUsers(conditions: FindConditions<Users>) {
-    return this.usersRepository.find(conditions);
-  }
-
-  async findUser(conditions: FindConditions<Users>) {
-    return this.usersRepository.findOne(conditions);
+  getUserById(id: number): Promise<Users> {
+    return this.usersRepository.findByUserId(id);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
-    const getUserOneByUsernameAndEmail = (username: string, email: string) => {
-      return (
-        this.usersRepository
-          .createQueryBuilder('users')
-          // TODO: 컬럼명 매칭 오류 제거
-          .where('usernameValue = :username')
-          .orWhere('emailValue = :email')
-          .setParameters({
-            username,
-            email,
-          })
-          .getOne()
-      );
-    };
     const { username, email, password, nickname } = createUserDto;
 
     const newUser: CreateUserProps = {
       email: new Email({ value: email }),
-      password: new Password(password),
+      password: await Password.encrypt(password),
       nickname: new Nickname(nickname),
       username: new Username(username),
     };
 
-    if (!!!(await getUserOneByUsernameAndEmail(username, email))) {
-      return this.usersRepository.save(this.usersRepository.create(newUser));
+    if (
+      !(await this.usersRepository.existsByUsernameOrEmail(username, email))
+    ) {
+      return this.usersRepository.save(newUser);
     }
 
     throw new HttpException(
@@ -62,11 +46,11 @@ export class UsersService {
     );
   }
 
-  // TODO: 인증 처리 이동
+  // TODO: 인증 처리 모듈로 이동
   async login({ username, password }: LoginInput): Promise<LoginOutput> {
     // TODO: username으로 이용자 찾기
-    const user = await this.usersRepository.findOne(1);
-    if (!!user && user.matchPassword(password)) {
+    const user = await this.usersRepository.findByUsername(username);
+    if (!!user && (await user.matchPassword(password))) {
       const token = await this.authServices.createJwt(user.id);
       return {
         ok: true,
@@ -83,17 +67,16 @@ export class UsersService {
     userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<Users> {
-    const user = await this.usersRepository.findOne({ id: userId });
+    const user = await this.usersRepository.findByUserId(userId);
     if (user.isCertifiedUser()) {
-      // TODO: 사용자 정보 수정 로직 추가
+      Object.assign(user, updateUserDto);
       return this.usersRepository.save(user);
     }
     return null;
   }
 
   async deleteUser(userId: number): Promise<boolean> {
-    const deleteResult = await this.usersRepository.delete(userId);
-    return deleteResult.affected > 0;
+    return this.usersRepository.delete(userId);
   }
 
   async editUserAvatar(user: number, avatar: Files) {

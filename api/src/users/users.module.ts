@@ -8,6 +8,7 @@ import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { Articles } from '../articles/entities/articles.entity';
 import { ArticlesModule } from '../articles/articles.module';
+import { UserTypeormRepository } from './database/user.typeorm.repository';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ArticlesModule } from '../articles/articles.module';
     TypeOrmModule.forFeature([Users, Articles]),
     FilesModule,
   ],
-  providers: [UsersService, UsersResolver],
+  providers: [UsersService, UsersResolver, UserTypeormRepository],
   exports: [UsersService],
   controllers: [UsersController],
 })

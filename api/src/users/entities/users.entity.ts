@@ -35,6 +35,8 @@ export type CreateUserProps = {
   email: Email;
 };
 
+export type UpdateUserProps = Partial<Omit<Users, 'id' | 'username'>>;
+
 @InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
@@ -93,7 +95,7 @@ export class Users extends CommonEntity {
     return this.email.isCertifiedUser();
   }
 
-  matchPassword(password: string): boolean {
-    return this.password.equals(new Password(password));
+  matchPassword(password: string): Promise<boolean> {
+    return this.password.isMatch(new Password(password));
   }
 }
