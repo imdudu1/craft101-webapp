@@ -7,10 +7,10 @@ export type EmailProps = {
 
 export class Email {
   @Column({ length: 30 })
-  private readonly value: string;
+  readonly value: string;
 
   @Column()
-  private readonly certifyEmail: boolean;
+  readonly certifyEmail: boolean;
 
   constructor(props: EmailProps) {
     /*

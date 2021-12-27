@@ -98,7 +98,7 @@ type MCStatus {
 
 type Mutation {
   addRecommendation(id: Float!, type: RecommendationType!): CreateRecommendationOutputDto!
-  createUser(email: String!, nickname: String!, password: String!, username: String!): Users!
+  createUser(email: String!, nickname: String!, password: String!, username: String!): UserResponse!
   deleteArticle(id: Float!): Boolean!
   deleteCategory(id: Float!): Boolean!
   deleteComments(commentId: Float!): Boolean!
@@ -127,7 +127,7 @@ type Query {
   category(id: Float!): Categories!
   comments(articleId: Float!): [Comments!]!
   login(password: String!, username: String!): LoginOutput!
-  me: Users!
+  me: UserResponse!
   myArticles: [Articles!]!
   serverArticle(id: Float!): ServerArticleDetailOutputDto!
   tagArticles(tag: String!): [Articles!]!
@@ -182,6 +182,18 @@ input UpdateCommentDto {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
+type UserResponse {
+  accountType: AccountType!
+  articles: [Articles!]!
+  comments: [Comments!]!
+  email: String!
+  files: [Files!]!
+  nickname: String!
+  recommendations: [Recommendations!]!
+  role: UserRole!
+  username: String!
+}
+
 enum UserRole {
   ADMIN
   USER
@@ -196,7 +208,6 @@ type Users {
   files: [Files!]!
   id: Float!
   nickname: String!
-  password: String!
   recommendations: [Recommendations!]!
   role: UserRole!
   updatedAt: DateTime!

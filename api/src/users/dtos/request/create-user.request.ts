@@ -2,7 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
 
 @ArgsType()
-export class CreateUserDto {
+export class CreateUserRequest {
   @Field(() => String)
   @IsString()
   @Matches(/[a-zA-Z0-9_-]{8,20}/)

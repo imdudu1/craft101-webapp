@@ -6,7 +6,7 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   async createJwt(id: number): Promise<string> {
-    return this.jwtService.sign(`${id}`);
+    return this.jwtService.sign({ id });
   }
 
   async verifyJwt(jwt: string) {

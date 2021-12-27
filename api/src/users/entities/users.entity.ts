@@ -45,7 +45,7 @@ export class Users extends CommonEntity {
   @Column((type) => Username)
   username: Username;
 
-  @Field(() => String)
+  // @Field(() => String)
   @Column((type) => Password)
   password: Password;
 

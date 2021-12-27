@@ -1,6 +1,6 @@
 import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 import { IsString, Matches } from 'class-validator';
-import { CommonOutput } from '../../common/dtos/output.dto';
+import { CommonOutput } from '../../../common/dtos/output.dto';
 
 @ArgsType()
 export default class LoginInput {

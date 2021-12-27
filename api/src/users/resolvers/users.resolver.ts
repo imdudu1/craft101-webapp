@@ -14,10 +14,11 @@ import { FilesService } from 'src/files/services/files.service';
 import { ArticlesService } from '../../articles/services/articles/articles.service';
 import { CommentsService } from '../../articles/services/comments/comments.service';
 import { RecommendationsService } from '../../articles/services/recommendations/recommendations.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
+import { CreateUserRequest } from '../dtos/request/create-user.request';
+import LoginInput, { LoginOutput } from '../dtos/request/login-user.request';
 import { Users } from '../entities/users.entity';
 import { UsersService } from '../services/users.service';
+import { UserResponse } from '../dtos/response/user.response';
 
 @Resolver(() => Users)
 export class UsersResolver {
@@ -29,9 +30,11 @@ export class UsersResolver {
     private readonly recommendationsService: RecommendationsService,
   ) {}
 
-  @Mutation(() => Users)
-  async createUser(@Args() createUserDto: CreateUserDto): Promise<Users> {
-    return this.usersService.createUser(createUserDto);
+  @Mutation(() => UserResponse)
+  async createUser(
+    @Args() createUserDto: CreateUserRequest,
+  ): Promise<UserResponse> {
+    return new UserResponse(await this.usersService.createUser(createUserDto));
   }
 
   @Query(() => LoginOutput)
@@ -61,10 +64,10 @@ export class UsersResolver {
     return true;
   }
 
-  @Query(() => Users)
+  @Query(() => UserResponse)
   @AllowUserRoles(['ANY'])
-  async me(@AuthUser() authUser: number): Promise<Users> {
-    return this.usersService.getUserById(authUser);
+  async me(@AuthUser() authUser: number): Promise<UserResponse> {
+    return new UserResponse(await this.usersService.getUserById(authUser));
   }
 
   @ResolveField()

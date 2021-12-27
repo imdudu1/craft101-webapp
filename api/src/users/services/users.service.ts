@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AuthService } from 'src/auth/services/auth.service';
 import { Files } from 'src/files/entities/files.entity';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import LoginInput, { LoginOutput } from '../dtos/login-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { CreateUserRequest } from '../dtos/request/create-user.request';
+import LoginInput, { LoginOutput } from '../dtos/request/login-user.request';
+import { UpdateUserRequest } from '../dtos/request/update-user.request';
 import { CreateUserProps, Users } from '../entities/users.entity';
 import { Password } from '../entities/vo/password.vo';
 import { Email } from '../entities/vo/email.vo';
@@ -24,7 +24,7 @@ export class UsersService {
     return this.usersRepository.findByUserId(id);
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<Users> {
+  async createUser(createUserDto: CreateUserRequest): Promise<Users> {
     const { username, email, password, nickname } = createUserDto;
 
     const newUser: CreateUserProps = {
@@ -65,7 +65,7 @@ export class UsersService {
 
   async updateUser(
     userId: number,
-    updateUserDto: UpdateUserDto,
+    updateUserDto: UpdateUserRequest,
   ): Promise<Users> {
     const user = await this.usersRepository.findByUserId(userId);
     if (user.isCertifiedUser()) {

@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
     if (token) {
       const user = await this.authService.verifyJwt(token);
       if (user) {
-        gqlContext['user'] = user;
+        gqlContext['user'] = user.id;
         if (roles.includes(AnyRole)) {
           return true;
         }
